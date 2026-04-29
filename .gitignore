@@ -1,0 +1,109 @@
+# -------------------
+# Build & CMake artifacts
+# -------------------
+build/
+_build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CMakeUserPresets.json
+CMakePresets.json
+
+# Generated files
+*.ninja
+.ninja_deps
+.ninja_log
+
+# -------------------
+# IDE / Editor files
+# -------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.cproject
+.settings/
+.vs/
+*.code-workspace
+
+# -------------------
+# OS generated files
+# -------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# -------------------
+# Temporary / Log files
+# -------------------
+*.log
+*.log.*
+*.tmp
+*.temp
+*.bak
+*.old
+
+# -------------------
+# Dependencies & third-party
+# -------------------
+#third_party/
+#external/
+#vendor/
+
+# -------------------
+# Output binaries & libraries
+# -------------------
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+*.lib
+*.a
+*.pdb
+*.ilk
+*.exp
+
+# Debug / Release folders (if not under build/)
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# -------------------
+# ImGui & SFML specific
+# -------------------
+imgui.ini
+
+# -------------------
+# Documentation & doxygen
+# -------------------
+html/
+latex/
+doxygen_warn.log
+doxygen.log
+
+# -------------------
+# Misc
+# -------------------
+*.user
+*.user.*
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb

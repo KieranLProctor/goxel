@@ -1,0 +1,11 @@
+---
+BasedOnStyle: LLVM
+AlignArrayOfStructures: Right
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+BreakBeforeBraces: Allman
+ColumnLimit: 120
+IndentWidth: 4
+InsertNewlineAtEOF: true
