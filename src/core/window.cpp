@@ -1,9 +1,9 @@
 #include "window.h"
 
 #include "glad/glad.h"
-#include "glm/gtx/io.hpp"
 
 #include <iostream>
+#include <utility>
 
 namespace core
 {
@@ -12,7 +12,7 @@ Window::Window(WindowMode mode, std::string title, std::uint32_t width, std::uin
                bool is_vsync)
 {
     m_mode = mode;
-    m_title = title;
+    m_title = std::move(title);
     m_width = width;
     m_height = height;
     m_is_resizable = is_resizable;
