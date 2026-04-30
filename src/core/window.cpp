@@ -31,7 +31,7 @@ auto Window::create() -> void
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, m_is_resizable);
+    glfwWindowHint(GLFW_RESIZABLE, m_is_resizable ? GLFW_TRUE : GLFW_FALSE);
 
     m_window =
         glfwCreateWindow(static_cast<int>(m_width), static_cast<int>(m_height), m_title.c_str(), nullptr, nullptr);
@@ -39,6 +39,8 @@ auto Window::create() -> void
     {
         std::cerr << "Failed to create GLFW window" << std::endl;
         assert(false);
+
+        return;
     }
 
     glfwMakeContextCurrent(m_window);
@@ -67,7 +69,7 @@ auto Window::update() -> void
 auto Window::get_framebuffer_size() -> glm::vec2
 {
     int width, height;
-    glfwGetWindowSize(m_window, &width, &height);
+    glfwGetFramebufferSize(m_window, &width, &height);
 
     return {width, height};
 }
