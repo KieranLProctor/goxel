@@ -24,6 +24,9 @@ Window::~Window()
 
 auto Window::create() -> void
 {
+    // TODO: Error checking.
+    glfwInit();
+
     // TODO: This should be conditional based on OS.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -37,8 +40,6 @@ auto Window::create() -> void
     {
         std::cerr << "Failed to create GLFW window" << std::endl;
         assert(false);
-
-        return;
     }
 
     glfwMakeContextCurrent(m_window);
