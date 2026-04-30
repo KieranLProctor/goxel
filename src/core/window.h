@@ -1,7 +1,7 @@
 #pragma once
 
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include <cstdint>
 #include <string>
 
 #include <glm/glm.hpp>
