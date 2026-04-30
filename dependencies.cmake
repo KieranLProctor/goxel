@@ -11,6 +11,17 @@ if (NOT TARGET glad)
     target_link_libraries(glad PUBLIC OpenGL::GL)
 endif ()
 
+# GLM
+find_package(glm 1.0.1 QUIET)
+if (NOT glm_FOUND)
+    FetchContent_Declare(
+            glm
+            DOWNLOAD_EXTRACT_TIMESTAMP OFF
+            URL https://github.com/g-truc/glm/archive/refs/tags/1.0.1.zip
+    )
+    FetchContent_MakeAvailable(glm)
+endif()
+
 # GLFW
 FetchContent_Declare(
         glfw
