@@ -1,0 +1,10 @@
+#pragma once
+
+namespace goxel::version
+{
+
+inline constexpr auto major = @goxel_VERSION_MAJOR@;
+inline constexpr auto minor = @goxel_VERSION_MINOR@;
+inline constexpr auto patch = @goxel_VERSION_PATCH@;
+
+}

@@ -1,5 +1,7 @@
 #include "window.h"
 
+#include "spdlog/spdlog.h"
+
 #include <iostream>
 #include <utility>
 
@@ -24,9 +26,6 @@ Window::~Window()
 
 auto Window::create() -> void
 {
-    // TODO: Error checking.
-    glfwInit();
-
     // TODO: This should be conditional based on OS.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -34,11 +33,17 @@ auto Window::create() -> void
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, m_is_resizable ? GLFW_TRUE : GLFW_FALSE);
 
+    if (!glfwInit())
+    {
+        spdlog::error("Failed to initialise GLFW!");
+        assert(false);
+    }
+
     m_window =
         glfwCreateWindow(static_cast<int>(m_width), static_cast<int>(m_height), m_title.c_str(), nullptr, nullptr);
     if (!m_window)
     {
-        std::cerr << "Failed to create GLFW window" << std::endl;
+        spdlog::error("Failed to create GLFW window!");
         assert(false);
     }
 
