@@ -1,23 +1,13 @@
 #include "window.h"
 
-#include "spdlog/spdlog.h"
-
-#include <iostream>
 #include <utility>
+
+#include "spdlog/spdlog.h"
 
 namespace core
 {
 
-Window::Window(WindowMode mode, std::string title, std::uint32_t width, std::uint32_t height, bool is_resizable,
-               bool is_vsync)
-{
-    m_mode = mode;
-    m_title = std::move(title);
-    m_width = width;
-    m_height = height;
-    m_is_resizable = is_resizable;
-    m_is_vsync = is_vsync;
-}
+Window::Window(WindowSpec spec) : m_spec(spec) {}
 
 Window::~Window()
 {
@@ -31,7 +21,7 @@ auto Window::create() -> void
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, m_is_resizable ? GLFW_TRUE : GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, m_spec.is_resizable ? GLFW_TRUE : GLFW_FALSE);
 
     if (!glfwInit())
     {
@@ -39,41 +29,40 @@ auto Window::create() -> void
         assert(false);
     }
 
-    m_window =
-        glfwCreateWindow(static_cast<int>(m_width), static_cast<int>(m_height), m_title.c_str(), nullptr, nullptr);
-    if (!m_window)
+    m_handle = glfwCreateWindow(m_spec.width, m_spec.height, m_spec.title.c_str(), nullptr, nullptr);
+    if (!m_handle)
     {
         spdlog::error("Failed to create GLFW window!");
         assert(false);
     }
 
-    glfwMakeContextCurrent(m_window);
+    glfwMakeContextCurrent(m_handle);
     gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
-    glfwSwapInterval(m_is_vsync ? 1 : 0);
+    glfwSwapInterval(m_spec.is_vsync ? 1 : 0);
 
-    glfwSetWindowUserPointer(m_window, this);
+    glfwSetWindowUserPointer(m_handle, this);
 }
 
 auto Window::destroy() -> void
 {
-    if (m_window)
+    if (m_handle)
     {
-        glfwDestroyWindow(m_window);
+        glfwDestroyWindow(m_handle);
     }
 
-    m_window = nullptr;
+    m_handle = nullptr;
 }
 
 auto Window::update() -> void
 {
-    glfwSwapBuffers(m_window);
+    glfwSwapBuffers(m_handle);
 }
 
 auto Window::get_framebuffer_size() -> glm::vec2
 {
     int width, height;
-    glfwGetFramebufferSize(m_window, &width, &height);
+    glfwGetFramebufferSize(m_handle, &width, &height);
 
     return {width, height};
 }
@@ -81,19 +70,19 @@ auto Window::get_framebuffer_size() -> glm::vec2
 auto Window::get_mouse_position() -> glm::vec2
 {
     double x, y;
-    glfwGetCursorPos(m_window, &x, &y);
+    glfwGetCursorPos(m_handle, &x, &y);
 
     return {static_cast<float>(x), static_cast<float>(y)};
 }
 
-auto Window::get_should_close() -> bool
+auto Window::should_close() -> bool
 {
-    return glfwWindowShouldClose(m_window);
+    return glfwWindowShouldClose(m_handle) != 0;
 }
 
-auto Window::get_window() -> GLFWwindow *
+auto Window::get_handle() -> GLFWwindow *
 {
-    return m_window;
+    return m_handle;
 }
 
 } // namespace core

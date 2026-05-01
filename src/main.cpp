@@ -1,4 +1,5 @@
 #include "config.h"
+#include "core/application.h"
 #include "core/window.h"
 #include "spdlog/spdlog.h"
 #include "utils/system_info.h"
@@ -9,21 +10,16 @@ int main()
 {
     spdlog::info("goxel version: {}.{}.{}", goxel::version::major, goxel::version::minor, goxel::version::patch);
 
-    auto window = core::Window(core::WindowMode::WINDOWED, "Test", 1000, 600, true, false);
-    window.create();
+    core::ApplicationSpec spec;
+    spec.name = "goxel";
+    spec.window_spec.title = "goxel";
+    spec.window_spec.width = 1000;
+    spec.window_spec.height = 600;
+    spec.window_spec.is_resizable = false;
+    spec.window_spec.is_vsync = false;
 
-    /* Loop until the user closes the window */
-    while (!window.get_should_close())
-    {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+    auto application = core::Application(spec);
+    application.run();
 
-        window.update();
-
-        /* Poll for and process events */
-        glfwPollEvents();
-    }
-
-    glfwTerminate();
     return 0;
 }

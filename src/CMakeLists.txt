@@ -1,6 +1,7 @@
 add_executable(goxel main.cpp
         core/window.cpp
         utils/system_info.cpp
+        core/application.cpp
 )
 
 configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in ${PROJECT_SOURCE_DIR}/src/config.h)

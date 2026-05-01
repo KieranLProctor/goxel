@@ -1,11 +1,13 @@
 #pragma once
 
+#include "glm/glm.hpp"
+
 namespace core
 {
 
 struct CameraData
 {
-     view;
+     glm::mat4 view;
 };
 
 class Camera
