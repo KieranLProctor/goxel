@@ -1,5 +1,7 @@
 #include "window.h"
 
+#include "window_event.h"
+
 #include <utility>
 
 #include "spdlog/spdlog.h"
@@ -42,6 +44,14 @@ auto Window::create() -> void
     glfwSwapInterval(m_spec.is_vsync ? 1 : 0);
 
     glfwSetWindowUserPointer(m_handle, this);
+
+    glfwSetWindowCloseCallback(m_handle,
+                               [](GLFWwindow *handle)
+                               {
+                                   auto window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                   WindowClosedEvent event;
+                                   window.raise_event(event);
+                               });
 }
 
 auto Window::destroy() -> void

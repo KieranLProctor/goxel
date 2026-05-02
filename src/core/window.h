@@ -1,7 +1,9 @@
 #pragma once
 
-#include <glad/glad.h>
+#include "event.h"
+
 #include "GLFW/glfw3.h"
+#include <glad/glad.h>
 #include <string>
 
 #include <glm/glm.hpp>
@@ -28,6 +30,8 @@ class Window
     auto destroy() -> void;
 
     auto update() -> void;
+
+    auto raise_event(Event &event) -> void;
 
     auto get_framebuffer_size() -> glm::vec2;
     auto get_mouse_position() -> glm::vec2;
