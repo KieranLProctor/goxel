@@ -2,8 +2,10 @@
 
 #include "event.h"
 
+#define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
-#include <glad/glad.h>
+
+#include <functional>
 #include <string>
 
 #include <glm/glm.hpp>
@@ -18,6 +20,8 @@ struct WindowSpec
     int height;
     bool is_resizable;
     bool is_vsync;
+
+    std::function<void(Event &)> event_callback;
 };
 
 class Window

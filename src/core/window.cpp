@@ -1,8 +1,7 @@
 #include "window.h"
 
+#include "glad/glad.h"
 #include "window_event.h"
-
-#include <utility>
 
 #include "spdlog/spdlog.h"
 
@@ -67,6 +66,14 @@ auto Window::destroy() -> void
 auto Window::update() -> void
 {
     glfwSwapBuffers(m_handle);
+}
+
+auto Window::raise_event(Event &event) -> void
+{
+    if (m_spec.event_callback)
+    {
+        m_spec.event_callback(event);
+    }
 }
 
 auto Window::get_framebuffer_size() -> glm::vec2
