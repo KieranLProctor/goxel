@@ -1,5 +1,7 @@
 #include "application.h"
 
+#include <ranges>
+
 namespace core
 {
 
@@ -40,6 +42,16 @@ auto Application::run() -> void
         auto timestep = glm::clamp(current_time - last_time, 0.001f, 0.1f);
         last_time = current_time;
 
+        for (auto &layer : m_layer_stack)
+        {
+            layer->on_update(timestep);
+        }
+
+        for (auto &layer : m_layer_stack)
+        {
+            layer->on_render();
+        }
+
         m_window->update();
     }
 }
@@ -47,6 +59,18 @@ auto Application::run() -> void
 auto Application::stop() -> void
 {
     m_is_running = false;
+}
+
+void Application::raise_event(Event &event)
+{
+    for (auto &layer : std::views::reverse(m_layer_stack))
+    {
+        layer->on_event(event);
+        if (event.is_handled)
+        {
+            break;
+        }
+    }
 }
 
 auto Application::get_framebuffer_size() -> glm::vec2
