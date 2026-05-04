@@ -26,6 +26,14 @@ class Application
 
     auto raise_event(Event &event) -> void;
 
+    // TODO: These need to be moved to a better place, they ugly :'(.
+    template <typename TLayer>
+        requires(std::is_base_of_v<Layer, TLayer>)
+    auto push_layer() -> void
+    {
+        m_layer_stack.push_back(std::make_unique<TLayer>());
+    }
+
     auto get_framebuffer_size() -> glm::vec2;
     auto get_window() -> std::shared_ptr<Window>;
 

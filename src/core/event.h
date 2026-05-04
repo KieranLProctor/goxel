@@ -8,9 +8,9 @@ namespace core
 enum class EventType
 {
     NONE = 0,
-    WINDOW_CLOSE,
-    WINDOW_RESIZE,
-    WINDOW_MOVE,
+    WINDOW_CLOSED,
+    WINDOW_RESIZED,
+    WINDOW_MOVED,
     KEY_PRESSED,
     KEY_RELEASED,
     MOUSE_BUTTON_PRESSED,

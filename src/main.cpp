@@ -2,9 +2,7 @@
 #include "core/application.h"
 #include "core/window.h"
 #include "spdlog/spdlog.h"
-#include "utils/system_info.h"
-
-#include <GLFW/glfw3.h>
+#include "ui/main_layer.h"
 
 int main()
 {
@@ -19,6 +17,7 @@ int main()
     spec.window_spec.is_vsync = false;
 
     auto application = core::Application(spec);
+    application.push_layer<ui::MainLayer>();
     application.run();
 
     return 0;
