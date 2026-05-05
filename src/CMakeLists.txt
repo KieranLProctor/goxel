@@ -8,6 +8,7 @@ add_executable(goxel main.cpp
         core/input_event.h
         core/window_event.h
         ui/main_layer.cpp
+        ui/overlay_layer.cpp
 )
 
 configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in ${PROJECT_SOURCE_DIR}/src/config.h)

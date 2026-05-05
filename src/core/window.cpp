@@ -1,6 +1,8 @@
 #include "window.h"
 
 #include "glad/glad.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 #include "input_event.h"
 #include "window_event.h"
 
@@ -25,7 +27,9 @@ auto Window::create() -> void
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, m_spec.is_resizable ? GLFW_TRUE : GLFW_FALSE);
 
-    m_handle = glfwCreateWindow(m_spec.width, m_spec.height, m_spec.title.c_str(), nullptr, nullptr);
+    auto main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
+    m_handle = glfwCreateWindow(static_cast<int>(m_spec.width * main_scale),
+                                static_cast<int>(m_spec.height * main_scale), m_spec.title.c_str(), nullptr, nullptr);
     if (!m_handle)
     {
         spdlog::error("Failed to create GLFW window!");
@@ -36,6 +40,24 @@ auto Window::create() -> void
     gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
     glfwSwapInterval(m_spec.is_vsync ? 1 : 0);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+
+    ImGui::StyleColorsDark();
+
+    // Setup scaling
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.ScaleAllSizes(main_scale);
+    style.FontScaleDpi = main_scale;
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(m_handle, true);
+    ImGui_ImplOpenGL3_Init();
 
     glfwSetWindowUserPointer(m_handle, this);
 
@@ -60,6 +82,8 @@ auto Window::create() -> void
     glfwSetKeyCallback(m_handle,
                        [](GLFWwindow *handle, int key, int scancode, int action, int mods)
                        {
+                           ImGui_ImplGlfw_KeyCallback(handle, key, scancode, action, mods);
+
                            Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                            switch (action)
@@ -83,6 +107,8 @@ auto Window::create() -> void
     glfwSetMouseButtonCallback(m_handle,
                                [](GLFWwindow *handle, int button, int action, int mods)
                                {
+                                   ImGui_ImplGlfw_MouseButtonCallback(handle, button, action, mods);
+
                                    Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                    switch (action)
@@ -103,17 +129,21 @@ auto Window::create() -> void
                                });
 
     glfwSetScrollCallback(m_handle,
-                          [](GLFWwindow *handle, double xOffset, double yOffset)
+                          [](GLFWwindow *handle, double x_offset, double y_offset)
                           {
+                              ImGui_ImplGlfw_ScrollCallback(handle, x_offset, y_offset);
+
                               Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
-                              MouseScrolledEvent event(xOffset, yOffset);
+                              MouseScrolledEvent event(x_offset, y_offset);
                               window.raise_event(event);
                           });
 
     glfwSetCursorPosCallback(m_handle,
                              [](GLFWwindow *handle, double x, double y)
                              {
+                                 ImGui_ImplGlfw_CursorPosCallback(handle, x, y);
+
                                  Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                  MouseMovedEvent event(x, y);

@@ -21,10 +21,7 @@ struct WindowSpec
     bool is_resizable;
     bool is_vsync;
 
-    // std::function<void(Event &)> event_callback;
-
-    using EventCallbackFn = std::function<void(Event&)>;
-    EventCallbackFn event_callback;
+    std::function<void(Event &)> event_callback;
 };
 
 class Window

@@ -1,5 +1,7 @@
 #include "application.h"
 
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 #include "spdlog/spdlog.h"
 #include <ranges>
 
@@ -32,6 +34,10 @@ Application::Application(ApplicationSpec spec) : m_spec(spec)
 
 Application::~Application()
 {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     m_window->destroy();
     m_window = nullptr;
 
