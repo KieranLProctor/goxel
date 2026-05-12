@@ -41,4 +41,30 @@ class WindowResizedEvent : public Event
     uint32_t m_height;
 };
 
+class WindowMovedEvent : public Event
+{
+  public:
+    WindowMovedEvent(int x, int y) : m_x(x), m_y(y) {}
+
+    auto get_x() const -> int
+    {
+        return m_x;
+    }
+    auto get_y() const -> int
+    {
+        return m_y;
+    }
+
+    auto to_string() const -> std::string override
+    {
+        return std::format("WindowMovedEvent: {}, {}", m_x, m_y);
+    }
+
+    EVENT_CLASS_TYPE(WINDOW_MOVED);
+
+  private:
+    int m_x;
+    int m_y;
+};
+
 } // namespace core
