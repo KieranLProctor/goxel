@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
 namespace core
 {
@@ -24,11 +25,11 @@ enum class EventType
     {                                                                                                                  \
         return EventType::type;                                                                                        \
     }                                                                                                                  \
-    virtual auto get_event_type() -> EventType const override                                                          \
+    virtual auto get_event_type() const -> EventType override                                                          \
     {                                                                                                                  \
         return get_static_type();                                                                                      \
     }                                                                                                                  \
-    virtual auto get_name() -> const char *override                                                                    \
+    virtual auto get_name() const -> std::string_view override                                                         \
     {                                                                                                                  \
         return #type;                                                                                                  \
     }
@@ -38,12 +39,18 @@ class Event
   public:
     bool is_handled = false;
 
-    virtual ~Event() {};
-    virtual auto get_event_type() -> EventType const = 0;
-    virtual auto get_name() -> const char * = 0;
-    virtual auto to_string() -> std::string
+    virtual ~Event() = default;
+
+    virtual auto get_event_type() const -> EventType = 0;
+    virtual auto get_name() const -> std::string_view = 0;
+    virtual auto to_string() const -> std::string
     {
-        return get_name();
+        return std::string(get_name());
+    }
+
+    auto handled() const -> bool
+    {
+        return is_handled;
     }
 };
 
@@ -56,7 +63,7 @@ class EventDispatcher
     {
         if (m_event.get_event_type() == T::get_static_type() && !m_event.is_handled)
         {
-            m_event.is_handled = (func)(static_cast<T &>(m_event));
+            m_event.is_handled = std::forward<F>(func)(static_cast<T &>(m_event));
 
             return true;
         }

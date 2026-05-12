@@ -70,3 +70,10 @@ if (NOT spdlog_FOUND)
     )
     FetchContent_MakeAvailable(spdlog)
 endif ()
+
+# STB
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/external/stb")
+
+# Optional alias for consistency with glm::glm / spdlog::spdlog
+add_library(stb::stb ALIAS stb)

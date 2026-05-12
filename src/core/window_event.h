@@ -10,7 +10,7 @@ namespace core
 class WindowClosedEvent : public Event
 {
   public:
-    WindowClosedEvent() {}
+    WindowClosedEvent() = default;
 
     EVENT_CLASS_TYPE(WINDOW_CLOSED)
 };
@@ -20,18 +20,18 @@ class WindowResizedEvent : public Event
   public:
     WindowResizedEvent(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
 
-    inline auto get_width() -> uint32_t
+    auto get_width() -> uint32_t
     {
         return m_width;
     }
-    inline auto get_height() -> uint32_t
+    auto get_height() -> uint32_t
     {
         return m_height;
     }
 
-    auto to_string() -> std::string override
+    auto to_string() const -> std::string override
     {
-        return std::format("WindowResizeEvent: {}, {}", m_width, m_height);
+        return std::format("WindowResizeEvent: {}x{}", m_width, m_height);
     }
 
     EVENT_CLASS_TYPE(WINDOW_RESIZED);
