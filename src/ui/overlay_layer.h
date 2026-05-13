@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../core/layer.h"
-#include "../core/input_event.h"
+#include "input_event.h"
+#include "layer.h"
 
 namespace ui
 {

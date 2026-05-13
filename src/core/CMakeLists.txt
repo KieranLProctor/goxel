@@ -5,6 +5,7 @@ target_sources(goxel_core PRIVATE
         window.cpp
         renderer/renderer.cpp
         renderer/shader.cpp
+        renderer/stb_image.cpp
 )
 
 target_sources(goxel_core PUBLIC
@@ -20,6 +21,7 @@ target_link_libraries(goxel_core PUBLIC
         imgui
         glm::glm
         spdlog::spdlog
+        stb::stb
 )
 
 target_include_directories(goxel_core PUBLIC
