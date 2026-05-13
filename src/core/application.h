@@ -18,7 +18,7 @@ struct ApplicationSpec
 class Application
 {
   public:
-    Application(ApplicationSpec spec);
+    explicit Application(ApplicationSpec spec);
     ~Application();
 
     auto run() -> void;
@@ -26,7 +26,13 @@ class Application
 
     auto raise_event(Event &event) -> void;
 
-    // TODO: These need to be moved to a better place, they ugly :'(.
+    template <typename TLayer, typename... Args>
+        requires(std::is_base_of_v<Layer, TLayer>)
+    auto push_layer(Args &&...args) -> void
+    {
+        m_layer_stack.push_back(std::make_unique<Layer>(std::forward<Args>(args)...));
+    }
+
     template <typename TLayer>
         requires(std::is_base_of_v<Layer, TLayer>)
     auto push_layer() -> void
@@ -37,17 +43,15 @@ class Application
     auto get_framebuffer_size() -> glm::vec2;
     auto get_window() -> std::shared_ptr<Window>;
 
-    // NOTE: Not sure if nicer way to be static so all methods
-    // align while using auto.
     static auto get_time() -> float;
     static auto get() -> Application &;
 
   private:
     ApplicationSpec m_spec;
     std::shared_ptr<Window> m_window;
-    bool m_is_running = false;
-
     std::vector<std::unique_ptr<Layer>> m_layer_stack;
+
+    bool m_is_running = false;
 };
 
 } // namespace core

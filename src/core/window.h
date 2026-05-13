@@ -27,24 +27,25 @@ struct WindowSpec
 class Window
 {
   public:
-    Window(WindowSpec spec);
+    explicit Window(WindowSpec spec);
     ~Window();
 
     auto create() -> void;
     auto destroy() -> void;
+    auto update() const -> void;
 
-    auto update() -> void;
+    auto get_framebuffer_size() const -> glm::vec2;
+    auto get_mouse_position() const -> glm::vec2;
 
-    auto raise_event(Event &event) -> void;
+    auto should_close() const -> bool;
 
-    auto get_framebuffer_size() -> glm::vec2;
-    auto get_mouse_position() -> glm::vec2;
-
-    auto should_close() -> bool;
-
-    auto get_handle() -> GLFWwindow *;
+    auto get_handle() const -> GLFWwindow *;
+    auto init_callbacks() const -> void;
 
   private:
+    static auto glfw_error_callback(int error, const char *description) -> void;
+    auto raise_event(Event &event) const -> void;
+
     WindowSpec m_spec;
     GLFWwindow *m_handle = nullptr;
 };

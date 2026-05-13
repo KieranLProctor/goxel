@@ -1,8 +1,9 @@
 #include "window.h"
 
+#include <utility>
+
 #include "glad/glad.h"
 #include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 #include "input_event.h"
 #include "window_event.h"
 
@@ -11,7 +12,7 @@
 namespace core
 {
 
-Window::Window(WindowSpec spec) : m_spec(spec) {}
+Window::Window(WindowSpec spec) : m_spec(std::move(spec)) {}
 
 Window::~Window()
 {
@@ -20,6 +21,8 @@ Window::~Window()
 
 auto Window::create() -> void
 {
+    glfwSetErrorCallback(glfw_error_callback);
+
     // TODO: This should be conditional based on OS.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -27,64 +30,165 @@ auto Window::create() -> void
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, m_spec.is_resizable ? GLFW_TRUE : GLFW_FALSE);
 
-    auto main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
-    m_handle = glfwCreateWindow(static_cast<int>(m_spec.width * main_scale),
-                                static_cast<int>(m_spec.height * main_scale), m_spec.title.c_str(), nullptr, nullptr);
+    float x_scale = 1.0f;
+    float y_scale = 1.0f;
+    glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), &x_scale, &y_scale);
+    float scale = std::max(x_scale, y_scale);
+
+    m_handle = glfwCreateWindow(static_cast<int>(m_spec.width * scale), static_cast<int>(m_spec.height * scale),
+                                m_spec.title.c_str(), nullptr, nullptr);
     if (!m_handle)
     {
-        spdlog::error("Failed to create GLFW window!");
+        spdlog::critical("Failed to create GLFW window!");
         assert(false);
     }
 
     glfwMakeContextCurrent(m_handle);
-    gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    {
+        spdlog::critical("Failed to initialize GLAD!");
+        assert(false);
+    }
 
     glfwSwapInterval(m_spec.is_vsync ? 1 : 0);
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-
-    ImGui::StyleColorsDark();
-
-    // Setup scaling
-    ImGuiStyle &style = ImGui::GetStyle();
-    style.ScaleAllSizes(main_scale);
-    style.FontScaleDpi = main_scale;
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(m_handle, true);
-    ImGui_ImplOpenGL3_Init();
-
     glfwSetWindowUserPointer(m_handle, this);
+}
 
+auto Window::destroy() -> void
+{
+    if (m_handle)
+    {
+        glfwDestroyWindow(m_handle);
+    }
+
+    m_handle = nullptr;
+}
+
+auto Window::update() const -> void
+{
+    glfwSwapBuffers(m_handle);
+}
+
+auto Window::raise_event(Event &event) const -> void
+{
+    if (m_spec.event_callback)
+    {
+        m_spec.event_callback(event);
+    }
+}
+
+auto Window::get_framebuffer_size() const -> glm::vec2
+{
+    int width;
+    int height;
+    glfwGetFramebufferSize(m_handle, &width, &height);
+
+    return {width, height};
+}
+
+auto Window::get_mouse_position() const -> glm::vec2
+{
+    double x;
+    double y;
+    glfwGetCursorPos(m_handle, &x, &y);
+
+    return {static_cast<float>(x), static_cast<float>(y)};
+}
+
+auto Window::should_close() const -> bool
+{
+    return glfwWindowShouldClose(m_handle) != 0;
+}
+
+auto Window::get_handle() const -> GLFWwindow *
+{
+    return m_handle;
+}
+
+auto Window::init_callbacks() const -> void
+{
     glfwSetWindowCloseCallback(m_handle,
                                [](GLFWwindow *handle)
                                {
-                                   Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                   auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                    WindowClosedEvent event;
                                    window.raise_event(event);
                                });
 
+    glfwSetWindowFocusCallback(m_handle,
+                               [](GLFWwindow *handle, int focused)
+                               {
+                                   auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+
+                                   switch (focused)
+                                   {
+                                   case GLFW_TRUE:
+                                   {
+                                       WindowFocussedEvent event;
+                                       window.raise_event(event);
+                                       break;
+                                   }
+                                   case GLFW_FALSE:
+                                   {
+                                       WindowUnfocussedEvent event;
+                                       window.raise_event(event);
+                                       break;
+                                   }
+                                   default:;
+                                   }
+                               });
+
+    glfwSetWindowIconifyCallback(m_handle,
+                                 [](GLFWwindow *handle, int iconified)
+                                 {
+                                     auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+
+                                     if (iconified == GLFW_TRUE)
+                                     {
+                                         WindowMinimizedEvent event;
+                                         window.raise_event(event);
+                                     }
+                                 });
+
+    glfwSetWindowMaximizeCallback(m_handle,
+                                  [](GLFWwindow *handle, int maximize)
+                                  {
+                                      auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+
+                                      if (maximize == GLFW_TRUE)
+                                      {
+                                          WindowMaximizedEvent event;
+                                          window.raise_event(event);
+                                      }
+                                  });
+
     glfwSetWindowSizeCallback(m_handle,
                               [](GLFWwindow *handle, int width, int height)
                               {
-                                  Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                  auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                   WindowResizedEvent event(static_cast<uint32_t>(width), static_cast<uint32_t>(height));
                                   window.raise_event(event);
                               });
+
+    glfwSetWindowPosCallback(m_handle,
+                             [](GLFWwindow *handle, int x, int y)
+                             {
+                                 auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+
+                                 WindowMovedEvent event(x, y);
+                                 window.raise_event(event);
+                             });
 
     glfwSetKeyCallback(m_handle,
                        [](GLFWwindow *handle, int key, int scancode, int action, int mods)
                        {
                            ImGui_ImplGlfw_KeyCallback(handle, key, scancode, action, mods);
 
-                           Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                           auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                            switch (action)
                            {
@@ -101,6 +205,7 @@ auto Window::create() -> void
                                window.raise_event(event);
                                break;
                            }
+                           default:;
                            }
                        });
 
@@ -109,7 +214,7 @@ auto Window::create() -> void
                                {
                                    ImGui_ImplGlfw_MouseButtonCallback(handle, button, action, mods);
 
-                                   Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                   auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                    switch (action)
                                    {
@@ -125,6 +230,7 @@ auto Window::create() -> void
                                        window.raise_event(event);
                                        break;
                                    }
+                                   default:;
                                    }
                                });
 
@@ -133,7 +239,7 @@ auto Window::create() -> void
                           {
                               ImGui_ImplGlfw_ScrollCallback(handle, x_offset, y_offset);
 
-                              Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                              auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                               MouseScrolledEvent event(x_offset, y_offset);
                               window.raise_event(event);
@@ -144,60 +250,16 @@ auto Window::create() -> void
                              {
                                  ImGui_ImplGlfw_CursorPosCallback(handle, x, y);
 
-                                 Window &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                 auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                  MouseMovedEvent event(x, y);
                                  window.raise_event(event);
                              });
 }
 
-auto Window::destroy() -> void
+auto Window::glfw_error_callback(int error, const char *description) -> void
 {
-    if (m_handle)
-    {
-        glfwDestroyWindow(m_handle);
-    }
-
-    m_handle = nullptr;
-}
-
-auto Window::update() -> void
-{
-    glfwSwapBuffers(m_handle);
-}
-
-auto Window::raise_event(Event &event) -> void
-{
-    if (m_spec.event_callback)
-    {
-        m_spec.event_callback(event);
-    }
-}
-
-auto Window::get_framebuffer_size() -> glm::vec2
-{
-    int width, height;
-    glfwGetFramebufferSize(m_handle, &width, &height);
-
-    return {width, height};
-}
-
-auto Window::get_mouse_position() -> glm::vec2
-{
-    double x, y;
-    glfwGetCursorPos(m_handle, &x, &y);
-
-    return {static_cast<float>(x), static_cast<float>(y)};
-}
-
-auto Window::should_close() -> bool
-{
-    return glfwWindowShouldClose(m_handle) != 0;
-}
-
-auto Window::get_handle() -> GLFWwindow *
-{
-    return m_handle;
+    spdlog::error("GLFW error {}: {}", error, description);
 }
 
 } // namespace core

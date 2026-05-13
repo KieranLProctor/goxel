@@ -1,12 +1,12 @@
 #include "renderer.h"
 
 #include "spdlog/spdlog.h"
-#include "stb_image.h"
+// #include "stb_image.h"
 
 namespace core::renderer
 {
 
-auto create_texture(int width, int height) -> Texture
+auto create_texture(const int width, const int height) -> Texture
 {
     Texture result;
     result.width = width;
@@ -25,16 +25,16 @@ auto create_texture(int width, int height) -> Texture
     return result;
 }
 
-auto load_texture(std::filesystem::path &path) -> Texture
-{
-    int width, height, channels;
-    std::string filepath = path.string();
-    stbi_set_flip_vertically_on_load(true);
+// auto load_texture(std::filesystem::path &path) -> Texture
+// {
+//     int width, height, channels;
+//     std::string filepath = path.string();
+//     stbi_set_flip_vertically_on_load(true);
+//
+//     return texture;
+// }
 
-    return texture;
-}
-
-auto create_framebuffer_with_texture(Texture texture) -> Framebuffer
+auto create_framebuffer_with_texture(const Texture texture) -> Framebuffer
 {
     Framebuffer result;
 
@@ -50,7 +50,7 @@ auto create_framebuffer_with_texture(Texture texture) -> Framebuffer
     return result;
 }
 
-auto attach_texture_to_framebuffer(Framebuffer &framebuffer, Texture texture) -> bool
+auto attach_texture_to_framebuffer(const Framebuffer &framebuffer, const Texture texture) -> bool
 {
     glNamedFramebufferTexture(framebuffer.handle, GL_COLOR_ATTACHMENT0, texture.handle, 0);
 

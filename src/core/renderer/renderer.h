@@ -24,7 +24,7 @@ struct Framebuffer
 auto create_texture(int width, int height) -> Texture;
 auto load_texture(std::filesystem::path &path) -> Texture;
 auto create_framebuffer_with_texture(Framebuffer &framebuffer, Texture texture) -> Framebuffer;
-auto attach_texture_to_framebuffer(Framebuffer &framebuffer, Texture texture) -> bool;
+auto attach_texture_to_framebuffer(const Framebuffer &framebuffer, Texture texture) -> bool;
 auto blit_framebuffer_to_swapchain(Framebuffer framebuffer) -> void;
 
 } // namespace core::renderer

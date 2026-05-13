@@ -15,6 +15,38 @@ class WindowClosedEvent : public Event
     EVENT_CLASS_TYPE(WINDOW_CLOSED)
 };
 
+class WindowFocussedEvent : public Event
+{
+  public:
+    WindowFocussedEvent() = default;
+
+    EVENT_CLASS_TYPE(WINDOW_FOCUSSED);
+};
+
+class WindowUnfocussedEvent : public Event
+{
+  public:
+    WindowUnfocussedEvent() = default;
+
+    EVENT_CLASS_TYPE(WINDOW_UNFOCUSSED);
+};
+
+class WindowMinimizedEvent : public Event
+{
+  public:
+    WindowMinimizedEvent() = default;
+
+    EVENT_CLASS_TYPE(WINDOW_MINIMIZED);
+};
+
+class WindowMaximizedEvent : public Event
+{
+  public:
+    WindowMaximizedEvent() = default;
+
+    EVENT_CLASS_TYPE(WINDOW_MAXIMIZED);
+};
+
 class WindowResizedEvent : public Event
 {
   public:

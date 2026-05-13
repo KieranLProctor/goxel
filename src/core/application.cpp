@@ -4,23 +4,23 @@
 #include "imgui_impl_opengl3.h"
 #include "spdlog/spdlog.h"
 #include <ranges>
+#include <utility>
 
 namespace core
 {
 
 static Application *s_application = nullptr;
 
-Application::Application(ApplicationSpec spec) : m_spec(spec)
+Application::Application(ApplicationSpec spec) : m_spec(std::move(spec))
 {
     s_application = this;
 
     if (!glfwInit())
     {
-        spdlog::error("Failed to initialise GLFW!");
+        spdlog::critical("Failed to initialise GLFW!");
         assert(false);
     }
 
-    // Set window to app name if title is empty.
     if (m_spec.window_spec.title.empty())
     {
         m_spec.window_spec.title = m_spec.name;
@@ -30,6 +30,26 @@ Application::Application(ApplicationSpec spec) : m_spec(spec)
 
     m_window = std::make_shared<Window>(m_spec.window_spec);
     m_window->create();
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    ImGui::StyleColorsDark();
+
+    // Setup scaling
+    // ImGuiStyle &style = ImGui::GetStyle();
+    // style.ScaleAllSizes(main_scale);
+    // style.FontScaleDpi = main_scale;
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(m_window->get_handle(), true);
+    ImGui_ImplOpenGL3_Init();
+
+    m_window->init_callbacks();
 }
 
 Application::~Application()
