@@ -59,7 +59,23 @@ class KeyReleasedEvent : public KeyEvent
 class MouseMovedEvent : public Event
 {
   public:
-    MouseMovedEvent(int x, int y) : m_mouse_x(x), m_mouse_y(y) {}
+    MouseMovedEvent(int x, int y) : m_mouse_x(x), m_mouse_y(y)
+    {
+        m_mouse_dx = x - s_last_x;
+        m_mouse_dy = y - s_last_y;
+        s_last_x = x;
+        s_last_y = y;
+    }
+
+    auto get_dx() const -> double
+    {
+        return m_mouse_dx;
+    }
+
+    auto get_dy() const -> double
+    {
+        return m_mouse_dy;
+    }
 
     auto get_x() const -> double
     {
@@ -72,14 +88,19 @@ class MouseMovedEvent : public Event
 
     auto to_string() const -> std::string override
     {
-        return std::format("MouseMovedEvent: {}, {}", m_mouse_x, m_mouse_y);
+        return std::format("MouseMovedEvent: {}, {} (delta: {}, {})", m_mouse_x, m_mouse_y, m_mouse_dx, m_mouse_dy);
     }
 
     EVENT_CLASS_TYPE(MOUSE_MOVED);
 
   private:
+    double m_mouse_dx;
+    double m_mouse_dy;
     double m_mouse_x;
     double m_mouse_y;
+
+    inline static double s_last_x = 0.0;
+    inline static double s_last_y = 0.0;
 };
 
 class MouseScrolledEvent : public Event

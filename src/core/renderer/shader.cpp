@@ -25,7 +25,7 @@ auto read_text_file(const std::filesystem::path &path) -> std::string
     return content_stream.str();
 }
 
-auto create_compute_shader(std::filesystem::path &path) -> uint32_t
+auto create_compute_shader(const std::filesystem::path &path) -> uint32_t
 {
     std::string shader_source = read_text_file(path);
     if (shader_source.empty())
@@ -85,7 +85,7 @@ auto create_compute_shader(std::filesystem::path &path) -> uint32_t
     return program;
 }
 
-auto reload_compute_shader(uint32_t shader_handle, std::filesystem::path &path) -> uint32_t
+auto reload_compute_shader(uint32_t shader_handle, const std::filesystem::path &path) -> uint32_t
 {
     uint32_t new_shader_handle = create_compute_shader(path);
 
@@ -102,7 +102,7 @@ auto reload_compute_shader(uint32_t shader_handle, std::filesystem::path &path) 
     return new_shader_handle;
 }
 
-auto create_graphics_shader(std::filesystem::path &vertex_path, std::filesystem::path &fragment_path) -> uint32_t
+auto create_graphics_shader(const std::filesystem::path &vertex_path, const std::filesystem::path &fragment_path) -> uint32_t
 {
     std::string vertex_shader_source = read_text_file(vertex_path);
     std::string fragment_shader_source = read_text_file(fragment_path);

@@ -19,9 +19,3 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 include(dependencies.cmake)
 
 add_subdirectory(src)
-
-#add_custom_target(copy_assets ALL
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        ${CMAKE_SOURCE_DIR}/assets
-#        ${CMAKE_BINARY_DIR}/assets
-#)

@@ -22,3 +22,10 @@ target_link_libraries(goxel PRIVATE
 )
 
 target_include_directories(goxel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_custom_command(
+        TARGET goxel POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        ${CMAKE_BINARY_DIR}/assets
+)

@@ -7,6 +7,7 @@ target_sources(goxel_ui PRIVATE
 
 target_link_libraries(goxel_ui PUBLIC
         goxel::core
+        goxel::game
         glm::glm
         spdlog::spdlog
 )
