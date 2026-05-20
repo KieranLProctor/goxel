@@ -19,18 +19,15 @@ auto read_text_file(const std::filesystem::path &path) -> std::string
         return {};
     }
 
-    std::ostringstream content_stream;
-    content_stream << file.rdbuf();
-
-    return content_stream.str();
+    return {std::istreambuf_iterator(file), {}};
 }
 
-auto create_compute_shader(const std::filesystem::path &path) -> uint32_t
+auto create_compute_shader(const std::filesystem::path &path) -> GLuint
 {
     std::string shader_source = read_text_file(path);
     if (shader_source.empty())
     {
-        return -1;
+        return 0;
     }
 
     GLuint shader_handle = glCreateShader(GL_COMPUTE_SHADER);
@@ -54,7 +51,7 @@ auto create_compute_shader(const std::filesystem::path &path) -> uint32_t
 
         glDeleteShader(shader_handle);
 
-        return -1;
+        return 0;
     }
 
     GLuint program = glCreateProgram();
@@ -76,7 +73,7 @@ auto create_compute_shader(const std::filesystem::path &path) -> uint32_t
         glDeleteProgram(program);
         glDeleteShader(shader_handle);
 
-        return -1;
+        return 0;
     }
 
     glDetachShader(program, shader_handle);
@@ -85,12 +82,12 @@ auto create_compute_shader(const std::filesystem::path &path) -> uint32_t
     return program;
 }
 
-auto reload_compute_shader(uint32_t shader_handle, const std::filesystem::path &path) -> uint32_t
+auto reload_compute_shader(uint32_t shader_handle, const std::filesystem::path &path) -> GLuint
 {
-    uint32_t new_shader_handle = create_compute_shader(path);
+    GLuint new_shader_handle = create_compute_shader(path);
 
     // Return old shader if compilation failed
-    if (new_shader_handle == -1)
+    if (new_shader_handle == 0)
     {
         spdlog::warn("Shader reload failed, keeping old shader");
 
@@ -102,14 +99,15 @@ auto reload_compute_shader(uint32_t shader_handle, const std::filesystem::path &
     return new_shader_handle;
 }
 
-auto create_graphics_shader(const std::filesystem::path &vertex_path, const std::filesystem::path &fragment_path) -> uint32_t
+auto create_graphics_shader(const std::filesystem::path &vertex_path, const std::filesystem::path &fragment_path)
+    -> GLuint
 {
     std::string vertex_shader_source = read_text_file(vertex_path);
     std::string fragment_shader_source = read_text_file(fragment_path);
 
     if (vertex_shader_source.empty() || fragment_shader_source.empty())
     {
-        return -1;
+        return 0;
     }
 
     // Vertex shader
@@ -135,7 +133,7 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 
         glDeleteShader(vertex_shader_handle);
 
-        return -1;
+        return 0;
     }
 
     // Fragment shader
@@ -159,9 +157,10 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 
         spdlog::error(info_log.data());
 
+        glDeleteShader(vertex_shader_handle);
         glDeleteShader(fragment_shader_handle);
 
-        return -1;
+        return 0;
     }
 
     // Program linking
@@ -187,7 +186,7 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
         glDeleteShader(vertex_shader_handle);
         glDeleteShader(fragment_shader_handle);
 
-        return -1;
+        return 0;
     }
 
     glDetachShader(program, vertex_shader_handle);
@@ -199,12 +198,12 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 }
 
 auto reload_graphics_shader(uint32_t shader_handle, const std::filesystem::path &vertex_path,
-                            const std::filesystem::path &fragment_path) -> uint32_t
+                            const std::filesystem::path &fragment_path) -> GLuint
 {
-    uint32_t new_shader_handle = create_graphics_shader(vertex_path, fragment_path);
+    GLuint new_shader_handle = create_graphics_shader(vertex_path, fragment_path);
 
     // Return old shader if compilation failed
-    if (new_shader_handle == -1)
+    if (new_shader_handle == 0)
     {
         spdlog::warn("Shader reload failed, keeping old shader");
 

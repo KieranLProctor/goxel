@@ -5,7 +5,7 @@ target_sources(goxel_utils PRIVATE
 )
 
 target_link_libraries(goxel_utils PUBLIC
-        goxel::core
+#        goxel::core
         glm::glm
         spdlog::spdlog
 )

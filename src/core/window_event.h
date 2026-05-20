@@ -51,11 +51,11 @@ class WindowResizedEvent : public Event
   public:
     WindowResizedEvent(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
 
-    auto get_width() -> uint32_t
+    auto get_width() const -> uint32_t
     {
         return m_width;
     }
-    auto get_height() -> uint32_t
+    auto get_height() const -> uint32_t
     {
         return m_height;
     }

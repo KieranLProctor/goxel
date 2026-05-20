@@ -59,7 +59,7 @@ class KeyReleasedEvent : public KeyEvent
 class MouseMovedEvent : public Event
 {
   public:
-    MouseMovedEvent(int x, int y) : m_mouse_x(x), m_mouse_y(y)
+    MouseMovedEvent(double x, double y) : m_mouse_x(x), m_mouse_y(y)
     {
         m_mouse_dx = x - s_last_x;
         m_mouse_dy = y - s_last_y;

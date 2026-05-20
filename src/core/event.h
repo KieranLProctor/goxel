@@ -29,11 +29,11 @@ enum class EventType
     {                                                                                                                  \
         return EventType::type;                                                                                        \
     }                                                                                                                  \
-    virtual auto get_event_type() const -> EventType override                                                          \
+    auto get_event_type() const -> EventType override                                                                  \
     {                                                                                                                  \
         return get_static_type();                                                                                      \
     }                                                                                                                  \
-    virtual auto get_name() const -> std::string_view override                                                         \
+    auto get_name() const -> std::string_view override                                                                 \
     {                                                                                                                  \
         return #type;                                                                                                  \
     }
@@ -41,8 +41,6 @@ enum class EventType
 class Event
 {
   public:
-    bool is_handled = false;
-
     virtual ~Event() = default;
 
     virtual auto get_event_type() const -> EventType = 0;
@@ -56,6 +54,10 @@ class Event
     {
         return is_handled;
     }
+    friend class EventDispatcher;
+
+  private:
+    bool is_handled = false;
 };
 
 class EventDispatcher
@@ -65,7 +67,7 @@ class EventDispatcher
 
     template <typename T, typename F> bool dispatch(F &&func)
     {
-        if (m_event.get_event_type() == T::get_static_type() && !m_event.is_handled)
+        if (m_event.get_event_type() == T::get_static_type() && !m_event.handled())
         {
             m_event.is_handled = std::forward<F>(func)(static_cast<T &>(m_event));
 

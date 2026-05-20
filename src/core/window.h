@@ -2,9 +2,7 @@
 
 #include "event.h"
 
-#define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
-
 #include <functional>
 #include <string>
 
@@ -16,10 +14,10 @@ namespace core
 struct WindowSpec
 {
     std::string title;
-    int width;
-    int height;
-    bool is_resizable;
-    bool is_vsync;
+    int width = 1280;
+    int height = 720;
+    bool is_resizable = true;
+    bool is_vsync = false;
 
     std::function<void(Event &)> event_callback;
 };
@@ -36,6 +34,8 @@ class Window
 
     auto get_framebuffer_size() const -> glm::vec2;
     auto get_mouse_position() const -> glm::vec2;
+
+    auto set_cursor_captured(bool capture) -> void;
 
     auto should_close() const -> bool;
 

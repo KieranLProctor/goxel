@@ -5,7 +5,6 @@
 
 namespace game
 {
-
 Camera::Camera(const float yaw, const float pitch) : m_yaw(yaw), m_pitch(pitch)
 {
     update_vectors();
@@ -27,23 +26,23 @@ auto Camera::cycle_mode() -> void
     {
     case CameraMode::FIRST_PERSON:
     {
-        m_mode = CameraMode::FIRST_PERSON;
+        m_mode = CameraMode::THIRD_PERSON;
         break;
     }
     case CameraMode::THIRD_PERSON:
     {
-        m_mode = CameraMode::THIRD_PERSON;
+        m_mode = CameraMode::THIRD_PERSON_SELF;
         break;
     }
     case CameraMode::THIRD_PERSON_SELF:
     {
-        m_mode = CameraMode::THIRD_PERSON_SELF;
+        m_mode = CameraMode::FIRST_PERSON;
         break;
     }
     }
 }
 
-auto Camera::get_position() -> glm::vec3
+auto Camera::get_position() const -> glm::vec3
 {
     return m_position;
 }
@@ -53,12 +52,12 @@ auto Camera::set_position(glm::vec3 position) -> void
     m_position = position;
 }
 
-auto Camera::get_yaw() -> float
+auto Camera::get_yaw() const -> float
 {
     return m_yaw;
 }
 
-auto Camera::get_pitch() -> float
+auto Camera::get_pitch() const -> float
 {
     return m_pitch;
 }
@@ -105,6 +104,11 @@ auto Camera::adjust_yaw(float delta) -> void
     update_vectors();
 }
 
+auto Camera::translate(glm::vec3 delta) -> void
+{
+    m_position += delta;
+}
+
 auto Camera::set_viewport(int width, int height) -> void
 {
     m_width = width;
@@ -118,7 +122,27 @@ auto Camera::get_fov() const -> float
 
 auto Camera::set_fov(float fov) -> void
 {
-    m_fov = glm::clamp(fov, 1.0f, 200.0f);
+    m_fov = glm::clamp(fov, 1.0f, 170.0f);
+}
+
+auto Camera::get_near_plane() const -> float
+{
+    return m_near_plane;
+}
+
+auto Camera::get_far_plane() const -> float
+{
+    return m_far_plane;
+}
+
+auto Camera::get_zoom() const -> float
+{
+    return m_zoom;
+}
+
+auto Camera::set_zoom(float zoom) -> void
+{
+    m_zoom = glm::clamp(zoom, 1.0f, 10.0f);
 }
 
 auto Camera::get_view_matrix() const -> glm::mat4
@@ -128,7 +152,7 @@ auto Camera::get_view_matrix() const -> glm::mat4
     if (m_mode == CameraMode::THIRD_PERSON_SELF)
     {
         // Look back at self.
-        return glm::lookAt(view, m_position, m_world_up);
+        return glm::lookAt(view, m_position, m_up);
     }
 
     return glm::lookAt(view, view + m_look, m_up);
@@ -136,7 +160,8 @@ auto Camera::get_view_matrix() const -> glm::mat4
 
 auto Camera::get_projection_matrix() const -> glm::mat4
 {
-    return glm::perspective(glm::radians(m_fov), static_cast<float>(m_width) / static_cast<float>(m_height), m_near_plane, m_far_plane);
+    return glm::perspective(glm::radians(m_fov / m_zoom), static_cast<float>(m_width) / static_cast<float>(m_height),
+                            m_near_plane, m_far_plane);
 }
 
 auto Camera::get_view_projection() const -> glm::mat4
@@ -158,13 +183,36 @@ auto Camera::update_vectors() -> void
     front.z = sin(glm::radians(m_yaw));
     m_front = glm::normalize(front);
 
-    m_right = glm::normalize(glm::cross(m_look, m_world_up));
+    constexpr float k_gimbal_threshold = 0.9999f;
+    if (glm::abs(glm::dot(m_look, m_world_up)) > k_gimbal_threshold)
+    {
+        // Derive right from the flat forward direction, which is always valid
+        m_right = glm::normalize(glm::cross(m_front, m_world_up));
+    }
+    else
+    {
+        m_right = glm::normalize(glm::cross(m_look, m_world_up));
+    }
+
+    // m_right = glm::normalize(glm::cross(m_look, m_world_up));
     m_up = glm::normalize(glm::cross(m_right, m_look));
 }
 
 auto Camera::compute_view() const -> glm::vec3
 {
-    return m_position;
+    switch (m_mode)
+    {
+    case CameraMode::THIRD_PERSON:
+        // Pull camera back behind the player along the look direction
+        return m_position - m_look * 5.0f;
+
+    case CameraMode::THIRD_PERSON_SELF:
+        // Push camera in front of the player (facing back toward them)
+        return m_position + m_look * 5.0f;
+
+    case CameraMode::FIRST_PERSON:
+    default: return m_position;
+    }
 }
 
 } // namespace game

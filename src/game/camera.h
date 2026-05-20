@@ -22,11 +22,11 @@ class Camera
     auto set_mode(CameraMode mode) -> void;
     auto cycle_mode() -> void;
 
-    auto get_position() -> glm::vec3;
+    auto get_position() const -> glm::vec3;
     auto set_position(glm::vec3 position) -> void;
 
-    auto get_yaw() -> float;
-    auto get_pitch() -> float;
+    auto get_yaw() const -> float;
+    auto get_pitch() const -> float;
 
     auto get_look() const -> glm::vec3;
     auto get_front() const -> glm::vec3;
@@ -35,6 +35,7 @@ class Camera
 
     auto adjust_pitch(float delta) -> void;
     auto adjust_yaw(float delta) -> void;
+    auto translate(glm::vec3 delta) -> void;
 
     auto set_viewport(int width, int height) -> void;
 
@@ -42,6 +43,8 @@ class Camera
     auto set_fov(float fov) -> void;
     auto get_near_plane() const -> float;
     auto get_far_plane() const -> float;
+    auto get_zoom() const -> float;
+    auto set_zoom(float zoom) -> void;
 
     auto get_view_matrix() const -> glm::mat4;
     auto get_projection_matrix() const -> glm::mat4;
@@ -63,10 +66,11 @@ class Camera
     float m_fov = 90.0f;
     float m_near_plane = 0.1f;
     float m_far_plane = 2000.0f;
-    int m_width = 0;
-    int m_height = 0;
+    float m_zoom = 1.0f;
+    int m_width = 1280;
+    int m_height = 720;
 
-    static constexpr float k_pitch_limit = 89.9f;
+    static constexpr float k_pitch_limit = 90.0f;
 
     auto update_vectors() -> void;
     auto compute_view() const -> glm::vec3;

@@ -97,6 +97,16 @@ auto Window::get_mouse_position() const -> glm::vec2
     return {static_cast<float>(x), static_cast<float>(y)};
 }
 
+auto Window::set_cursor_captured(bool captured) -> void
+{
+    glfwSetInputMode(m_handle, GLFW_CURSOR, captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+
+    if (glfwRawMouseMotionSupported())
+    {
+        glfwSetInputMode(m_handle, GLFW_RAW_MOUSE_MOTION, captured ? GLFW_TRUE : GLFW_FALSE);
+    }
+}
+
 auto Window::should_close() const -> bool
 {
     return glfwWindowShouldClose(m_handle) != 0;

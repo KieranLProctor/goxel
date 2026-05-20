@@ -31,7 +31,9 @@ class MainLayer : public core::Layer
     game::Camera m_camera {-90.0f, 0.0f};
 
     float m_move_speed = 1.0f;
+    static constexpr float k_base_sensitivity = 0.1f;
     float m_mouse_sensitivity = 1.0f;
+    bool m_cursor_captured = false;
 };
 
 } // namespace ui

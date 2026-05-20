@@ -30,20 +30,13 @@ class Application
         requires(std::is_base_of_v<Layer, TLayer>)
     auto push_layer(Args &&...args) -> void
     {
-        m_layer_stack.push_back(std::make_unique<Layer>(std::forward<Args>(args)...));
-    }
-
-    template <typename TLayer>
-        requires(std::is_base_of_v<Layer, TLayer>)
-    auto push_layer() -> void
-    {
-        m_layer_stack.push_back(std::make_unique<TLayer>());
+        m_layer_stack.push_back(std::make_unique<TLayer>(std::forward<Args>(args)...));
     }
 
     auto get_framebuffer_size() -> glm::vec2;
     auto get_window() -> std::shared_ptr<Window>;
 
-    static auto get_time() -> float;
+    static auto get_time() -> double;
     static auto get() -> Application &;
 
   private:

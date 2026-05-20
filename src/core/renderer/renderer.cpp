@@ -7,7 +7,7 @@
 namespace core::renderer
 {
 
-auto create_texture(const int width, const int height) -> Texture
+auto create_texture(const int width, const int height, const GLenum internal_format = GL_RGBA8) -> Texture
 {
     Texture result;
     result.width = width;
@@ -15,7 +15,7 @@ auto create_texture(const int width, const int height) -> Texture
 
     glCreateTextures(GL_TEXTURE_2D, 1, &result.handle);
 
-    glTextureStorage2D(result.handle, 1, GL_RGBA32F, width, height);
+    glTextureStorage2D(result.handle, 1, internal_format, width, height);
 
     glTextureParameteri(result.handle, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTextureParameteri(result.handle, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -42,7 +42,13 @@ auto load_texture(const std::filesystem::path &path) -> Texture
         return {};
     }
 
-    GLenum format = channels == 4 ? GL_RGBA : channels == 3 ? GL_RGB : channels == 1 ? GL_RED : 0;
+    GLenum base_format, internal_format;
+    switch (channels) {
+    case 4: base_format = GL_RGBA; internal_format = GL_RGBA8; break;
+    case 3: base_format = GL_RGB;  internal_format = GL_RGB8;  break;
+    case 1: base_format = GL_RED;  internal_format = GL_R8;    break;
+    default: spdlog::error("Unsupported channel count: {}", channels); stbi_image_free(data); return {};
+    }
 
     Texture result;
     result.width = width;
@@ -50,9 +56,10 @@ auto load_texture(const std::filesystem::path &path) -> Texture
 
     glCreateTextures(GL_TEXTURE_2D, 1, &result.handle);
 
-    glTextureStorage2D(result.handle, 1, (format == GL_RGBA ? GL_RGBA8 : GL_RGB8), width, height);
+    glTextureStorage2D(result.handle, 1, internal_format, width, height);
 
-    glTextureSubImage2D(result.handle, 0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
+    glTextureStorage2D(result.handle, 1, internal_format, width, height);
+    glTextureSubImage2D(result.handle, 0, 0, 0, width, height, base_format, GL_UNSIGNED_BYTE, data);
 
     glTextureParameteri(result.handle, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTextureParameteri(result.handle, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -60,7 +67,7 @@ auto load_texture(const std::filesystem::path &path) -> Texture
     glTextureParameteri(result.handle, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTextureParameteri(result.handle, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    glGenerateMipmap(result.handle);
+    glGenerateTextureMipmap(result.handle);
     stbi_image_free(data);
 
     return result;
@@ -79,6 +86,8 @@ auto create_framebuffer_with_texture(const Texture texture) -> Framebuffer
         return {};
     }
 
+    result.colour_attachment = texture;
+
     return result;
 }
 
@@ -86,7 +95,7 @@ auto attach_texture_to_framebuffer(const Framebuffer &framebuffer, const Texture
 {
     glNamedFramebufferTexture(framebuffer.handle, GL_COLOR_ATTACHMENT0, texture.handle, 0);
 
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (glCheckNamedFramebufferStatus(framebuffer.handle, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         spdlog::error("Framebuffer is not complete!");
 
@@ -98,7 +107,7 @@ auto attach_texture_to_framebuffer(const Framebuffer &framebuffer, const Texture
 
 auto blit_framebuffer_to_swapchain(const Framebuffer framebuffer) -> void
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.handle);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer.handle);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     glBlitFramebuffer(0, 0, framebuffer.colour_attachment.width, framebuffer.colour_attachment.height, 0, 0,

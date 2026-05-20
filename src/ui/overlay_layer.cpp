@@ -4,8 +4,6 @@
 #include "../core/input_event.h"
 #include "GLFW/glfw3.h"
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 
 namespace ui
 {
@@ -25,14 +23,7 @@ auto OverlayLayer::on_update(float time_step) -> void {}
 
 auto OverlayLayer::on_render() -> void
 {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
     show_menu_bar(m_show_menu_bar);
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 auto OverlayLayer::show_menu_bar(bool is_visible) -> void

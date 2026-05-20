@@ -58,7 +58,6 @@ Application::~Application()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    m_window->destroy();
     m_window = nullptr;
 
     glfwTerminate();
@@ -82,8 +81,12 @@ auto Application::run() -> void
         }
 
         auto current_time = get_time();
-        auto timestep = glm::clamp(current_time - last_time, 0.001f, 0.1f);
+        auto timestep = static_cast<float>(glm::clamp(current_time - last_time, 0.001, 0.1));
         last_time = current_time;
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         for (auto &layer : m_layer_stack)
         {
@@ -94,6 +97,9 @@ auto Application::run() -> void
         {
             layer->on_render();
         }
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         m_window->update();
     }
@@ -109,7 +115,7 @@ auto Application::raise_event(Event &event) -> void
     for (auto &layer : std::views::reverse(m_layer_stack))
     {
         layer->on_event(event);
-        if (event.is_handled)
+        if (event.handled())
         {
             break;
         }
@@ -126,9 +132,9 @@ auto Application::get_window() -> std::shared_ptr<Window>
     return m_window;
 }
 
-auto Application::get_time() -> float
+auto Application::get_time() -> double
 {
-    return static_cast<float>(glfwGetTime());
+    return glfwGetTime();
 }
 
 auto Application::get() -> Application &
