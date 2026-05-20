@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../game/camera.h"
+#include "ecs.h"
 #include "event.h"
-#include "glad/glad.h"
 #include "input_event.h"
 #include "layer.h"
+#include "systems/render_system.h"
 
 namespace ui
 {
@@ -24,16 +25,17 @@ class MainLayer : public core::Layer
     auto on_mouse_move(core::MouseMovedEvent &event) -> bool;
 
   private:
-    GLuint m_simple_shader = 0;
-    GLuint m_simple_vao = 0;
-    GLuint m_simple_vbo = 0;
+    game::Camera m_camera{-90.0f, 0.0f};
+    game::systems::RenderSystem m_render_system{m_camera};
 
-    game::Camera m_camera {-90.0f, 0.0f};
+    entt::registry &m_registry = game::get_registry();
+    entt::entity m_player = entt::null;
 
     float m_move_speed = 1.0f;
-    static constexpr float k_base_sensitivity = 0.1f;
     float m_mouse_sensitivity = 1.0f;
     bool m_cursor_captured = false;
+
+    static constexpr float k_base_sensitivity = 0.1f;
 };
 
 } // namespace ui

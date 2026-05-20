@@ -2,6 +2,8 @@
 
 #include "../game/camera.h"
 #include "application.h"
+#include "components/renderable.h"
+#include "components/transform.h"
 #include "glad/glad.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -18,63 +20,67 @@ MainLayer::MainLayer()
     spdlog::info("created MainLayer!");
 
     float vertices[] = {
-        // left face (red)
-        -1.0f,-1.0f,-1.0f,  1.0f, 0.0f, 0.0f,
-        -1.0f,-1.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-        -1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-        -1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f,
-        -1.0f, 1.0f,-1.0f,  1.0f, 0.0f, 0.0f,
-        -1.0f,-1.0f,-1.0f,  1.0f, 0.0f, 0.0f,
+        // Front (Magenta) - +Z
+        -1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
+        -1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
 
-        // right face (green)
-         1.0f, 1.0f,-1.0f,  0.0f, 1.0f, 0.0f,
-         1.0f,-1.0f,-1.0f,  0.0f, 1.0f, 0.0f,
-         1.0f,-1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         1.0f,-1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         1.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-         1.0f, 1.0f,-1.0f,  0.0f, 1.0f, 0.0f,
+        // Back (Cyan) - -Z
+         1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
+         1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
+         1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
 
-        // bottom face (blue)
-         1.0f,-1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,  0.0f, 0.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,  0.0f, 0.0f, 1.0f,
-         1.0f,-1.0f,-1.0f,  0.0f, 0.0f, 1.0f,
-         1.0f,-1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+        // Right (Green) - +X
+         1.0f, -1.0f,  1.0f,   0.0f, 1.0f, 0.0f,
+         1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,   0.0f, 1.0f, 0.0f,
+         1.0f, -1.0f,  1.0f,   0.0f, 1.0f, 0.0f,
 
-        // top face (yellow)
-         1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 0.0f,
-         1.0f, 1.0f,-1.0f,  1.0f, 1.0f, 0.0f,
-        -1.0f, 1.0f,-1.0f,  1.0f, 1.0f, 0.0f,
-        -1.0f, 1.0f,-1.0f,  1.0f, 1.0f, 0.0f,
-        -1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 0.0f,
-         1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 0.0f,
+        // Left (Red) - -X
+        -1.0f, -1.0f, -1.0f,   1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,   1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f,   1.0f, 0.0f, 0.0f,
 
-        // back face (cyan)
-         1.0f, 1.0f,-1.0f,  0.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,  0.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,  0.0f, 1.0f, 1.0f,
-         1.0f, 1.0f,-1.0f,  0.0f, 1.0f, 1.0f,
-         1.0f,-1.0f,-1.0f,  0.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,  0.0f, 1.0f, 1.0f,
+        // Top (Yellow) - +Y   ← FIXED WINDING
+        -1.0f,  1.0f, -1.0f,   1.0f, 1.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,   1.0f, 1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,   1.0f, 1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,   1.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, -1.0f,   1.0f, 1.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,   1.0f, 1.0f, 0.0f,
 
-        // front face (magenta)
-        -1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,  1.0f, 0.0f, 1.0f,
-         1.0f,-1.0f, 1.0f,  1.0f, 0.0f, 1.0f,
-         1.0f,-1.0f, 1.0f,  1.0f, 0.0f, 1.0f,
-         1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 1.0f,
+        // Bottom (Blue) - -Y
+        -1.0f, -1.0f, -1.0f,   0.0f, 0.0f, 1.0f,
+         1.0f, -1.0f, -1.0f,   0.0f, 0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f,   0.0f, 0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f,   0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f,  1.0f,   0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,   0.0f, 0.0f, 1.0f,
     };
 
-    m_simple_shader =
+    GLuint simple_shader =
         core::renderer::create_graphics_shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
 
-    glGenVertexArrays(1, &m_simple_vao);
-    glGenBuffers(1, &m_simple_vbo);
-    glBindVertexArray(m_simple_vao);
+    GLuint simple_vao;
+    GLuint simple_vbo;
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_simple_vbo);
+    glGenVertexArrays(1, &simple_vao);
+    glGenBuffers(1, &simple_vbo);
+
+    glBindVertexArray(simple_vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, simple_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // position
@@ -88,6 +94,25 @@ MainLayer::MainLayer()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    m_player = m_registry.create();
+    m_registry.emplace<game::components::Transform>(m_player, glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+    m_registry.emplace<game::components::Renderable>(m_player);
+
+    for (int x = -5; x <= 5; ++x)
+    {
+        for (int z = -5; z <= 5; ++z)
+        {
+            auto block = m_registry.create();
+            m_registry.emplace<game::components::Transform>(block, glm::vec3(x * 3.0f, -2.0f, z * 3.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+            m_registry.emplace<game::components::Renderable>(block);
+        }
+    }
+
+    m_render_system.set_shader(simple_shader);
+    m_render_system.set_vao(simple_vao);
+    m_render_system.set_vbo(simple_vbo);
+    m_render_system.init();
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
@@ -95,15 +120,7 @@ MainLayer::MainLayer()
     m_camera.set_viewport(static_cast<int>(frame_buffer.x), static_cast<int>(frame_buffer.y));
 }
 
-MainLayer::~MainLayer()
-{
-    if (m_simple_shader != 0)
-    {
-        glDeleteBuffers(1, &m_simple_vbo);
-        glDeleteVertexArrays(1, &m_simple_vao);
-        glDeleteProgram(m_simple_shader);
-    }
-}
+MainLayer::~MainLayer() {}
 
 auto MainLayer::on_update(float time_step) -> void
 {
@@ -148,34 +165,13 @@ auto MainLayer::on_render() -> void
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(m_simple_shader);
-    glBindVertexArray(m_simple_vao);
-
-    glm::mat4 view = m_camera.get_view_matrix();
-    glm::mat4 proj = m_camera.get_projection_matrix();
-    glUniformMatrix4fv(glGetUniformLocation(m_simple_shader, "uView"), 1, GL_FALSE, &view[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(m_simple_shader, "uProjection"), 1, GL_FALSE, &proj[0][0]);
-
-    auto draw_cube = [&](glm::vec3 position)
-    {
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-        glUniformMatrix4fv(glGetUniformLocation(m_simple_shader, "uModel"), 1, GL_FALSE, &model[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    };
-
-    draw_cube({ -3.0f, 0.0f, 0.0f});
-    draw_cube({ 0.0f, 0.0f, 0.0f});
-    draw_cube({3.0f, 0.0f, 0.0f});
-
-    draw_cube({ -3.0f, -3.0f, 0.0f});
-    draw_cube({ 0.0f, -3.0f, 0.0f});
-    draw_cube({3.0f, -3.0f, 0.0f});
+    m_render_system.update();
 
     glBindVertexArray(0);
     glUseProgram(0);
 
     // --- ImGui debug overlay ---
-    ImGui::Begin("Camera Debug", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Begin("Camera Debug");
 
     // Eye position
     auto eye = m_camera.get_position();
@@ -204,15 +200,6 @@ auto MainLayer::on_render() -> void
     ImGui::SeparatorText("Orientation");
     ImGui::Text("Yaw:   %.2f", m_camera.get_yaw());
     ImGui::Text("Pitch: %.2f", m_camera.get_pitch());
-
-    // Mouse deltas - add these members to main_layer.h
-    ImGui::SeparatorText("Mouse");
-    ImGui::Text("Sensitivity: %.2f", m_mouse_sensitivity);
-    ImGui::SliderFloat("##sens", &m_mouse_sensitivity, 0.1f, 10.0f);
-
-    // Triangle position for reference
-    ImGui::SeparatorText("Object");
-    ImGui::Text("Dist to eye: %.2f", glm::length(eye - glm::vec3(0.0f, 0.0f, -5.0f)));
 
     // Camera mode
     ImGui::SeparatorText("Mode");
