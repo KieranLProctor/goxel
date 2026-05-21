@@ -1,5 +1,6 @@
 #pragma once
 
+#include "block.h"
 #include "camera.h"
 #include "glad/glad.h"
 
@@ -18,6 +19,8 @@ public:
     auto set_shader(GLuint shader) -> void;
     auto set_vao(GLuint vao) -> void;
     auto set_vbo(GLuint vbo) -> void;
+
+    auto get_block_colour(Block block) -> glm::vec3;
 
 private:
     Camera &m_camera;

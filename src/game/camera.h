@@ -71,6 +71,7 @@ class Camera
     int m_height = 720;
 
     static constexpr float k_pitch_limit = 90.0f;
+    static constexpr float k_third_person_offset = 5.0f;
 
     auto update_vectors() -> void;
     auto compute_view() const -> glm::vec3;

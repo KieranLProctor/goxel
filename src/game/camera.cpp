@@ -183,10 +183,9 @@ auto Camera::update_vectors() -> void
     front.z = sin(glm::radians(m_yaw));
     m_front = glm::normalize(front);
 
-    constexpr float k_gimbal_threshold = 0.9999f;
-    if (glm::abs(glm::dot(m_look, m_world_up)) > k_gimbal_threshold)
+    constexpr float gimbal_threshold = 0.9999f;
+    if (glm::abs(glm::dot(m_look, m_world_up)) > gimbal_threshold)
     {
-        // Derive right from the flat forward direction, which is always valid
         m_right = glm::normalize(glm::cross(m_front, m_world_up));
     }
     else
@@ -194,7 +193,6 @@ auto Camera::update_vectors() -> void
         m_right = glm::normalize(glm::cross(m_look, m_world_up));
     }
 
-    // m_right = glm::normalize(glm::cross(m_look, m_world_up));
     m_up = glm::normalize(glm::cross(m_right, m_look));
 }
 
@@ -203,12 +201,10 @@ auto Camera::compute_view() const -> glm::vec3
     switch (m_mode)
     {
     case CameraMode::THIRD_PERSON:
-        // Pull camera back behind the player along the look direction
-        return m_position - m_look * 5.0f;
+        return m_position - m_look * k_third_person_offset;
 
     case CameraMode::THIRD_PERSON_SELF:
-        // Push camera in front of the player (facing back toward them)
-        return m_position + m_look * 5.0f;
+        return m_position + m_look * k_third_person_offset;
 
     case CameraMode::FIRST_PERSON:
     default: return m_position;

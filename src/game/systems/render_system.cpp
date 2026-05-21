@@ -63,15 +63,13 @@ auto RenderSystem::update() -> void
     for (auto entity : render_view)
     {
         auto &transform = render_view.get<components::Transform>(entity);
+        auto &renderable = render_view.get<components::Renderable>(entity);
 
-        auto model = glm::mat4(1.0f);
-        model = glm::translate(model, transform.position);
-        model = glm::rotate(model, transform.rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, transform.rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, transform.rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, transform.scale);
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position);
+        glm::vec3 colour = get_block_colour(renderable.block_type);
 
         glUniformMatrix4fv(m_loc_model, 1, GL_FALSE, &model[0][0]);
+        glUniform3fv(glGetUniformLocation(m_shader, "uBlockColour"), 1, &colour[0]);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
@@ -96,6 +94,19 @@ auto RenderSystem::set_vao(GLuint vao) -> void
 auto RenderSystem::set_vbo(GLuint vbo) -> void
 {
     m_vbo = vbo;
+}
+
+auto RenderSystem::get_block_colour(Block block) -> glm::vec3
+{
+    switch (block)
+    {
+    case Block::GRASS: return {0.0f, 0.8f, 0.2f};
+    case Block::DIRT: return {0.6f, 0.4f, 0.2f};
+    case Block::STONE: return {0.5f, 0.5f, 0.5f};
+    case Block::WOOD: return {0.7f, 0.5f, 0.2f};
+    case Block::LEAVES: return {0.0f, 0.7f, 0.1f};
+    default: return {1.0f, 0.0f, 1.0f};
+    }
 }
 
 } // namespace game::systems

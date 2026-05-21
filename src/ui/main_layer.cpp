@@ -1,6 +1,6 @@
 #include "main_layer.h"
 
-#include "../game/camera.h"
+#include "camera.h"
 #include "application.h"
 #include "components/renderable.h"
 #include "components/transform.h"
@@ -11,6 +11,7 @@
 #include "imgui.h"
 #include "renderer/shader.h"
 #include "spdlog/spdlog.h"
+#include "block.h"
 
 namespace ui
 {
@@ -20,53 +21,53 @@ MainLayer::MainLayer()
     spdlog::info("created MainLayer!");
 
     float vertices[] = {
-        // Front (Magenta) - +Z
-        -1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
-         1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
-         1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
-        -1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 1.0f,
+        // Front face (+Z)
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
 
-        // Back (Cyan) - -Z
-         1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
-        -1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
-        -1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
-         1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
-         1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 1.0f,
+        // Back face (-Z)
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
 
-        // Right (Green) - +X
-         1.0f, -1.0f,  1.0f,   0.0f, 1.0f, 0.0f,
-         1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 0.0f,
-         1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 0.0f,
-         1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f,   0.0f, 1.0f, 0.0f,
-         1.0f, -1.0f,  1.0f,   0.0f, 1.0f, 0.0f,
+        // Right face (+X)
+         1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
 
-        // Left (Red) - -X
-        -1.0f, -1.0f, -1.0f,   1.0f, 0.0f, 0.0f,
-        -1.0f, -1.0f,  1.0f,   1.0f, 0.0f, 0.0f,
-        -1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 0.0f,
-        -1.0f,  1.0f,  1.0f,   1.0f, 0.0f, 0.0f,
-        -1.0f,  1.0f, -1.0f,   1.0f, 0.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f,   1.0f, 0.0f, 0.0f,
+        // Left face (-X)
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
 
-        // Top (Yellow) - +Y   ← FIXED WINDING
-        -1.0f,  1.0f, -1.0f,   1.0f, 1.0f, 0.0f,
-        -1.0f,  1.0f,  1.0f,   1.0f, 1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f,   1.0f, 1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f,   1.0f, 1.0f, 0.0f,
-         1.0f,  1.0f, -1.0f,   1.0f, 1.0f, 0.0f,
-        -1.0f,  1.0f, -1.0f,   1.0f, 1.0f, 0.0f,
+        // Top face (+Y)
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
 
-        // Bottom (Blue) - -Y
-        -1.0f, -1.0f, -1.0f,   0.0f, 0.0f, 1.0f,
-         1.0f, -1.0f, -1.0f,   0.0f, 0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f,   0.0f, 0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f,   0.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f,  1.0f,   0.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, -1.0f,   0.0f, 0.0f, 1.0f,
+        // Bottom face (-Y)
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
     };
 
     GLuint simple_shader =
@@ -84,29 +85,27 @@ MainLayer::MainLayer()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), static_cast<void *>(nullptr));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void *>(nullptr));
     glEnableVertexAttribArray(0);
-
-    // colour
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    m_player = m_registry.create();
-    m_registry.emplace<game::components::Transform>(m_player, glm::vec3(0.0f, 0.0f, 20.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-    m_registry.emplace<game::components::Renderable>(m_player);
+    auto &registry = game::get_registry();
 
-    for (int x = -5; x <= 5; ++x)
-    {
-        for (int z = -5; z <= 5; ++z)
-        {
-            auto block = m_registry.create();
-            m_registry.emplace<game::components::Transform>(block, glm::vec3(x * 3.0f, -2.0f, z * 3.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-            m_registry.emplace<game::components::Renderable>(block);
-        }
-    }
+    auto grass = registry.create();
+    registry.emplace<game::components::Transform>(grass, glm::vec3(0.0f, 0.0f, 0.0f));
+    registry.emplace<game::components::Renderable>(grass, game::Block::GRASS);
+
+    // Dirt below
+    auto dirt = registry.create();
+    registry.emplace<game::components::Transform>(dirt, glm::vec3(3.0f, 0.0f, 0.0f));
+    registry.emplace<game::components::Renderable>(dirt, game::Block::DIRT);
+
+    // Stone
+    auto stone = registry.create();
+    registry.emplace<game::components::Transform>(stone, glm::vec3(6.0f, 0.0f, 0.0f));
+    registry.emplace<game::components::Renderable>(stone, game::Block::STONE);
 
     m_render_system.set_shader(simple_shader);
     m_render_system.set_vao(simple_vao);
@@ -237,6 +236,17 @@ auto MainLayer::on_keyboard_input(core::KeyPressedEvent &event) -> bool
     {
         m_cursor_captured = !m_cursor_captured;
         core::Application::get().get_window()->set_cursor_captured(m_cursor_captured);
+    }
+
+    // TEMP.
+    if (event.get_key_code() == GLFW_KEY_UP)
+    {
+        m_camera.set_zoom(m_camera.get_zoom() + 1.0f);
+    }
+
+    if (event.get_key_code() == GLFW_KEY_DOWN)
+    {
+        m_camera.set_zoom(m_camera.get_zoom() - 1.0f);
     }
 
     return true;
