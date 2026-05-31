@@ -8,7 +8,7 @@
 
 #include <glm/glm.hpp>
 
-namespace core
+namespace goxel::core
 {
 
 struct WindowSpec

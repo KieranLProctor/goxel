@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-namespace rendering
+namespace goxel::rendering
 {
 
 enum class CameraMode

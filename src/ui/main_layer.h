@@ -7,7 +7,7 @@
 #include "systems/render_system.h"
 #include <entt/entt.hpp>
 
-namespace ui
+namespace goxel::ui
 {
 
 class MainLayer : public core::Layer

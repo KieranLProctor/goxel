@@ -3,7 +3,7 @@
 #include "GLFW/glfw3.h"
 #include "imgui.h"
 
-namespace ui
+namespace goxel::ui
 {
 
 OverlayLayer::OverlayLayer() {}

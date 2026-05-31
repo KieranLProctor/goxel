@@ -4,7 +4,7 @@
 #include "camera.h"
 #include "glad/glad.h"
 
-namespace game::systems
+namespace goxel::game::systems
 {
 
 class RenderSystem
@@ -20,7 +20,7 @@ class RenderSystem
     auto set_vao(GLuint vao) -> void;
     auto set_vbo(GLuint vbo) -> void;
 
-    auto get_block_colour(Block block) -> glm::vec3;
+    auto get_block_colour(voxel::Block block) -> glm::vec3;
 
   private:
     rendering::Camera &m_camera;

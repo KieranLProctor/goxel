@@ -6,7 +6,7 @@
 #include <ranges>
 #include <utility>
 
-namespace core
+namespace goxel::core
 {
 
 static Application *s_application = nullptr;

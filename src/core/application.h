@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-namespace core
+namespace goxel::core
 {
 
 struct ApplicationSpec

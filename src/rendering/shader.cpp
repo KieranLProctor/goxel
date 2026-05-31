@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace rendering
+namespace goxel::rendering
 {
 
 auto read_text_file(const std::filesystem::path &path) -> std::string

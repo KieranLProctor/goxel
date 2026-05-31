@@ -3,7 +3,7 @@
 #include "event.h"
 #include <format>
 
-namespace core
+namespace goxel::core
 {
 
 class WindowClosedEvent : public Event

@@ -6,7 +6,7 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/glm.hpp"
 
-namespace game::systems
+namespace goxel::game::systems
 {
 
 RenderSystem::RenderSystem(rendering::Camera &camera) : m_camera(camera) {}
@@ -96,15 +96,15 @@ auto RenderSystem::set_vbo(GLuint vbo) -> void
     m_vbo = vbo;
 }
 
-auto RenderSystem::get_block_colour(Block block) -> glm::vec3
+auto RenderSystem::get_block_colour(voxel::Block block) -> glm::vec3
 {
     switch (block)
     {
-    case Block::GRASS: return {0.0f, 0.8f, 0.2f};
-    case Block::DIRT: return {0.6f, 0.4f, 0.2f};
-    case Block::STONE: return {0.5f, 0.5f, 0.5f};
-    case Block::WOOD: return {0.7f, 0.5f, 0.2f};
-    case Block::LEAVES: return {0.0f, 0.7f, 0.1f};
+    case voxel::Block::GRASS: return {0.0f, 0.8f, 0.2f};
+    case voxel::Block::DIRT: return {0.6f, 0.4f, 0.2f};
+    case voxel::Block::STONE: return {0.5f, 0.5f, 0.5f};
+    case voxel::Block::WOOD: return {0.7f, 0.5f, 0.2f};
+    case voxel::Block::LEAVES: return {0.0f, 0.7f, 0.1f};
     default: return {1.0f, 0.0f, 1.0f};
     }
 }

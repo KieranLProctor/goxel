@@ -2,7 +2,7 @@
 
 #include <format>
 
-namespace utils
+namespace goxel::utils
 {
 
 // TODO: Implement.

@@ -9,7 +9,7 @@ int main()
 {
     spdlog::info("goxel version: {}.{}.{}", goxel::version::major, goxel::version::minor, goxel::version::patch);
 
-    core::ApplicationSpec spec;
+    goxel::core::ApplicationSpec spec;
     spec.name = "goxel";
     spec.window_spec.title = "goxel";
     spec.window_spec.width = 1000;
@@ -17,9 +17,9 @@ int main()
     spec.window_spec.is_resizable = true;
     spec.window_spec.is_vsync = false;
 
-    auto application = core::Application(spec);
-    application.push_layer<ui::MainLayer>();
-    application.push_layer<ui::OverlayLayer>();
+    auto application = goxel::core::Application(spec);
+    application.push_layer<goxel::ui::MainLayer>();
+    application.push_layer<goxel::ui::OverlayLayer>();
     application.run();
 
     return 0;

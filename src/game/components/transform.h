@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-namespace game::components
+namespace goxel::game::components
 {
 
 struct Transform

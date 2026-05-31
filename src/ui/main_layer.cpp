@@ -11,7 +11,7 @@
 #include "shader.h"
 #include "spdlog/spdlog.h"
 
-namespace ui
+namespace goxel::ui
 {
 
 MainLayer::MainLayer()
@@ -93,17 +93,17 @@ MainLayer::MainLayer()
 
     auto grass = registry.create();
     registry.emplace<game::components::Transform>(grass, glm::vec3(0.0f, 0.0f, 0.0f));
-    registry.emplace<game::components::Renderable>(grass, game::Block::GRASS);
+    registry.emplace<game::components::Renderable>(grass, voxel::Block::GRASS);
 
     // Dirt below
     auto dirt = registry.create();
     registry.emplace<game::components::Transform>(dirt, glm::vec3(3.0f, 0.0f, 0.0f));
-    registry.emplace<game::components::Renderable>(dirt, game::Block::DIRT);
+    registry.emplace<game::components::Renderable>(dirt, voxel::Block::DIRT);
 
     // Stone
     auto stone = registry.create();
     registry.emplace<game::components::Transform>(stone, glm::vec3(6.0f, 0.0f, 0.0f));
-    registry.emplace<game::components::Renderable>(stone, game::Block::STONE);
+    registry.emplace<game::components::Renderable>(stone, voxel::Block::STONE);
 
     m_render_system.set_shader(simple_shader);
     m_render_system.set_vao(simple_vao);

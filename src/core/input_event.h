@@ -4,7 +4,7 @@
 
 #include <format>
 
-namespace core
+namespace goxel::core
 {
 
 class KeyEvent : public Event

@@ -2,14 +2,14 @@
 
 #include "block.h"
 
-namespace game::components
+namespace goxel::game::components
 {
 
 struct Renderable
 {
-    Block block_type = Block::STONE;
+    voxel::Block block_type = voxel::Block::STONE;
 
-    explicit Renderable(Block type = Block::STONE) : block_type(type) {}
+    explicit Renderable(voxel::Block type = voxel::Block::STONE) : block_type(type) {}
 };
 
 } // namespace game::components

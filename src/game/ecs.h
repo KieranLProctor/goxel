@@ -2,7 +2,7 @@
 
 #include <entt/entt.hpp>
 
-namespace game
+namespace goxel::game
 {
 
 inline entt::registry &get_registry()

@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <glad/glad.h>
 
-namespace rendering
+namespace goxel::rendering
 {
 
 auto create_compute_shader(const std::filesystem::path &path) -> GLuint;

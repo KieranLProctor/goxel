@@ -4,7 +4,7 @@
 
 #include <filesystem>
 
-namespace rendering
+namespace goxel::rendering
 {
 
 struct Texture

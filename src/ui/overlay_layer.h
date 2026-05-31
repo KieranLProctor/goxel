@@ -3,7 +3,7 @@
 #include "input_event.h"
 #include "layer.h"
 
-namespace ui
+namespace goxel::ui
 {
 
 class OverlayLayer : public core::Layer

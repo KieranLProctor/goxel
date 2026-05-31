@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../external/stb/stb_image.h"
 
-namespace rendering
+namespace goxel::rendering
 {
 
 auto create_texture(const int width, const int height, const GLenum internal_format = GL_RGBA8) -> Texture

@@ -9,7 +9,7 @@
 
 #include "spdlog/spdlog.h"
 
-namespace core
+namespace goxel::core
 {
 
 Window::Window(WindowSpec spec) : m_spec(std::move(spec)) {}

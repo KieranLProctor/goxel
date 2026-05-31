@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace utils
+namespace goxel::utils
 {
 
 struct SystemInfo

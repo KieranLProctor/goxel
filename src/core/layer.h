@@ -2,7 +2,7 @@
 
 #include "event.h"
 
-namespace core
+namespace goxel::core
 {
 
 class Layer

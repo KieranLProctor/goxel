@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace game
+namespace goxel::voxel
 {
 
 enum class Block : uint16_t

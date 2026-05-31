@@ -3,7 +3,7 @@
 #include <string>
 #include <string_view>
 
-namespace core
+namespace goxel::core
 {
 
 enum class EventType
