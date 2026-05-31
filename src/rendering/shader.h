@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <glad/glad.h>
 
-namespace core::renderer
+namespace rendering
 {
 
 auto create_compute_shader(const std::filesystem::path &path) -> GLuint;
@@ -14,4 +14,4 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 auto reload_graphics_shader(uint32_t shader_handle, const std::filesystem::path &vertex_path,
                             const std::filesystem::path &fragment_path) -> GLuint;
 
-} // namespace core::renderer
+} // namespace rendering

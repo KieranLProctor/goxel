@@ -1,6 +1,5 @@
 #include "main_layer.h"
 
-#include "camera.h"
 #include "application.h"
 #include "components/renderable.h"
 #include "components/transform.h"
@@ -9,9 +8,8 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/glm.hpp"
 #include "imgui.h"
-#include "renderer/shader.h"
+#include "shader.h"
 #include "spdlog/spdlog.h"
-#include "block.h"
 
 namespace ui
 {
@@ -71,7 +69,7 @@ MainLayer::MainLayer()
     };
 
     GLuint simple_shader =
-        core::renderer::create_graphics_shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
+        rendering::create_graphics_shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
 
     GLuint simple_vao;
     GLuint simple_vbo;
@@ -205,9 +203,9 @@ auto MainLayer::on_render() -> void
     auto mode_str = "Unknown";
     switch (m_camera.get_mode())
     {
-    case game::CameraMode::FIRST_PERSON: mode_str = "First Person"; break;
-    case game::CameraMode::THIRD_PERSON: mode_str = "Third Person Back"; break;
-    case game::CameraMode::THIRD_PERSON_SELF: mode_str = "Third Person Front"; break;
+    case rendering::CameraMode::FIRST_PERSON: mode_str = "First Person"; break;
+    case rendering::CameraMode::THIRD_PERSON: mode_str = "Third Person Back"; break;
+    case rendering::CameraMode::THIRD_PERSON_SELF: mode_str = "Third Person Front"; break;
     }
     ImGui::Text("Mode: %s", mode_str);
     if (ImGui::Button("Cycle Mode (F5)"))

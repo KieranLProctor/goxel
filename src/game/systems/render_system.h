@@ -9,8 +9,8 @@ namespace game::systems
 
 class RenderSystem
 {
-public:
-    explicit RenderSystem(Camera &camera);
+  public:
+    explicit RenderSystem(rendering::Camera &camera);
     ~RenderSystem();
 
     auto init() -> void;
@@ -22,15 +22,15 @@ public:
 
     auto get_block_colour(Block block) -> glm::vec3;
 
-private:
-    Camera &m_camera;
+  private:
+    rendering::Camera &m_camera;
     GLuint m_shader = 0;
     GLuint m_vao = 0;
-    GLuint m_vbo    = 0;
+    GLuint m_vbo = 0;
 
-    GLint m_loc_model      = -1;
-    GLint m_loc_view       = -1;
+    GLint m_loc_model = -1;
+    GLint m_loc_view = -1;
     GLint m_loc_projection = -1;
 };
 
-}
+} // namespace game::systems

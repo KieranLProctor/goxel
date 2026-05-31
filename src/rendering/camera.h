@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-namespace game
+namespace rendering
 {
 
 enum class CameraMode
@@ -77,4 +77,4 @@ class Camera
     auto compute_view() const -> glm::vec3;
 };
 
-} // namespace game
+} // namespace rendering

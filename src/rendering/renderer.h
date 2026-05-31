@@ -4,7 +4,7 @@
 
 #include <filesystem>
 
-namespace core::renderer
+namespace rendering
 {
 
 struct Texture
@@ -26,4 +26,4 @@ auto create_framebuffer_with_texture(Texture texture) -> Framebuffer;
 auto attach_texture_to_framebuffer(const Framebuffer &framebuffer, Texture texture) -> bool;
 auto blit_framebuffer_to_swapchain(Framebuffer framebuffer) -> void;
 
-} // namespace core::renderer
+} // namespace rendering

@@ -3,8 +3,9 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
-namespace game
+namespace rendering
 {
+
 Camera::Camera(const float yaw, const float pitch) : m_yaw(yaw), m_pitch(pitch)
 {
     update_vectors();
@@ -200,15 +201,13 @@ auto Camera::compute_view() const -> glm::vec3
 {
     switch (m_mode)
     {
-    case CameraMode::THIRD_PERSON:
-        return m_position - m_look * k_third_person_offset;
+    case CameraMode::THIRD_PERSON: return m_position - m_look * k_third_person_offset;
 
-    case CameraMode::THIRD_PERSON_SELF:
-        return m_position + m_look * k_third_person_offset;
+    case CameraMode::THIRD_PERSON_SELF: return m_position + m_look * k_third_person_offset;
 
     case CameraMode::FIRST_PERSON:
     default: return m_position;
     }
 }
 
-} // namespace game
+} // namespace rendering

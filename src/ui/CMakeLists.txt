@@ -5,15 +5,17 @@ target_sources(goxel_ui PRIVATE
         overlay_layer.cpp
 )
 
-target_link_libraries(goxel_ui PUBLIC
-        goxel::core
-        goxel::game
-        glm::glm
-        spdlog::spdlog
-)
-
-target_include_directories(goxel_ui PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
+target_sources(goxel_ui PUBLIC FILE_SET HEADERS
+        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+        FILES
+        main_layer.h
+        overlay_layer.h
 )
 
 add_library(goxel::ui ALIAS goxel_ui)
+
+target_link_libraries(goxel_ui PUBLIC
+        goxel::core
+        goxel::rendering
+        goxel::game
+)

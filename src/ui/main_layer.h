@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../game/camera.h"
+#include "camera.h"
 #include "ecs.h"
-#include "event.h"
 #include "input_event.h"
 #include "layer.h"
 #include "systems/render_system.h"
+#include <entt/entt.hpp>
 
 namespace ui
 {
@@ -25,7 +25,7 @@ class MainLayer : public core::Layer
     auto on_mouse_move(core::MouseMovedEvent &event) -> bool;
 
   private:
-    game::Camera m_camera{-90.0f, 0.0f};
+    rendering::Camera m_camera{-90.0f, 0.0f};
     game::systems::RenderSystem m_render_system{m_camera};
 
     entt::registry &m_registry = game::get_registry();

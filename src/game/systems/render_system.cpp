@@ -9,7 +9,7 @@
 namespace game::systems
 {
 
-RenderSystem::RenderSystem(Camera &camera) : m_camera(camera) {}
+RenderSystem::RenderSystem(rendering::Camera &camera) : m_camera(camera) {}
 
 RenderSystem::~RenderSystem()
 {

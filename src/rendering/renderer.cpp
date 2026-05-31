@@ -2,9 +2,11 @@
 
 #include "spdlog/spdlog.h"
 
-#include "stb_image.h"
+// TODO: Improve this.
+#define STB_IMAGE_IMPLEMENTATION
+#include "../../external/stb/stb_image.h"
 
-namespace core::renderer
+namespace rendering
 {
 
 auto create_texture(const int width, const int height, const GLenum internal_format = GL_RGBA8) -> Texture
@@ -115,4 +117,4 @@ auto blit_framebuffer_to_swapchain(const Framebuffer framebuffer) -> void
                       GL_NEAREST);
 }
 
-} // namespace core::renderer
+} // namespace rendering

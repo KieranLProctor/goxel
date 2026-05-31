@@ -1,7 +1,5 @@
 #include "overlay_layer.h"
 
-#include "../core/application.h"
-#include "../core/input_event.h"
 #include "GLFW/glfw3.h"
 #include "imgui.h"
 

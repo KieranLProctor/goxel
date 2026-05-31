@@ -1,5 +1,7 @@
 #pragma once
 
+#include "block.h"
+
 namespace game::components
 {
 
@@ -10,4 +12,4 @@ struct Renderable
     explicit Renderable(Block type = Block::STONE) : block_type(type) {}
 };
 
-}
+} // namespace game::components

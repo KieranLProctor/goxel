@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace core::renderer
+namespace rendering
 {
 
 auto read_text_file(const std::filesystem::path &path) -> std::string
@@ -215,4 +215,4 @@ auto reload_graphics_shader(uint32_t shader_handle, const std::filesystem::path 
     return new_shader_handle;
 }
 
-} // namespace core::renderer
+} // namespace rendering
