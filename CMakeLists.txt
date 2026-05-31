@@ -19,3 +19,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 include(dependencies.cmake)
 
 add_subdirectory(src)
+
+# TODO:
+#set(CPACK_PACKAGE_NAME "goxel")
+#set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+#set(CPACK_GENERATOR "ZIP")
+#set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+#set(CPACK_SOURCE_IGNORE_FILES "build")
+#include(CPack)
