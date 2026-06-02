@@ -4,6 +4,7 @@
 #include "spdlog/spdlog.h"
 
 #include <fstream>
+#include <vector>
 
 namespace goxel::rendering
 {
@@ -215,4 +216,4 @@ auto reload_graphics_shader(uint32_t shader_handle, const std::filesystem::path 
     return new_shader_handle;
 }
 
-} // namespace rendering
+} // namespace goxel::rendering

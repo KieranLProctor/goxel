@@ -1,9 +1,11 @@
 #pragma once
 
+#include "imgui_context.h"
 #include "layer.h"
 #include "window.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 
 namespace goxel::core
@@ -43,6 +45,7 @@ class Application
     ApplicationSpec m_spec;
     std::shared_ptr<Window> m_window;
     std::vector<std::unique_ptr<Layer>> m_layer_stack;
+    std::optional<rendering::ImGuiContext> m_imgui;
 
     bool m_is_running = false;
 };

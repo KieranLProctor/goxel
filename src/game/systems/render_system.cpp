@@ -13,20 +13,9 @@ RenderSystem::RenderSystem(rendering::Camera &camera) : m_camera(camera) {}
 
 RenderSystem::~RenderSystem()
 {
-    if (m_shader != 0)
-    {
-        glDeleteProgram(m_shader);
-    }
-
-    if (m_vao != 0)
-    {
-        glDeleteVertexArrays(1, &m_vao);
-    }
-
-    if (m_vbo != 0)
-    {
-        glDeleteBuffers(1, &m_vbo);
-    }
+    glDeleteProgram(m_shader);
+    glDeleteVertexArrays(1, &m_vao);
+    glDeleteBuffers(1, &m_vbo);
 }
 
 auto RenderSystem::init() -> void
@@ -39,6 +28,7 @@ auto RenderSystem::init() -> void
     m_loc_model = glGetUniformLocation(m_shader, "uModel");
     m_loc_view = glGetUniformLocation(m_shader, "uView");
     m_loc_projection = glGetUniformLocation(m_shader, "uProjection");
+    m_loc_colour = glGetUniformLocation(m_shader, "uBlockColour");
 }
 
 auto RenderSystem::update() -> void
@@ -69,7 +59,7 @@ auto RenderSystem::update() -> void
         glm::vec3 colour = get_block_colour(renderable.block_type);
 
         glUniformMatrix4fv(m_loc_model, 1, GL_FALSE, &model[0][0]);
-        glUniform3fv(glGetUniformLocation(m_shader, "uBlockColour"), 1, &colour[0]);
+        glUniform3fv(m_loc_colour, 1, &colour[0]);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
@@ -84,6 +74,7 @@ auto RenderSystem::set_shader(GLuint shader) -> void
     m_loc_model = glGetUniformLocation(m_shader, "uModel");
     m_loc_view = glGetUniformLocation(m_shader, "uView");
     m_loc_projection = glGetUniformLocation(m_shader, "uProjection");
+    m_loc_colour = glGetUniformLocation(m_shader, "uBlockColour");
 }
 
 auto RenderSystem::set_vao(GLuint vao) -> void
@@ -109,4 +100,4 @@ auto RenderSystem::get_block_colour(voxel::Block block) -> glm::vec3
     }
 }
 
-} // namespace game::systems
+} // namespace goxel::game::systems

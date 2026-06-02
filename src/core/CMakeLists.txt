@@ -13,6 +13,7 @@ target_sources(goxel_core PUBLIC
         layer.h
         window.h
         window_event.h
+        imgui_context.h
 )
 
 add_library(goxel::core ALIAS goxel_core)

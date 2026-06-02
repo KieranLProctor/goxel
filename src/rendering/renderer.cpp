@@ -59,8 +59,6 @@ auto load_texture(const std::filesystem::path &path) -> Texture
     glCreateTextures(GL_TEXTURE_2D, 1, &result.handle);
 
     glTextureStorage2D(result.handle, 1, internal_format, width, height);
-
-    glTextureStorage2D(result.handle, 1, internal_format, width, height);
     glTextureSubImage2D(result.handle, 0, 0, 0, width, height, base_format, GL_UNSIGNED_BYTE, data);
 
     glTextureParameteri(result.handle, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

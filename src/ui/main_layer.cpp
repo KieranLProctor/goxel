@@ -71,15 +71,17 @@ MainLayer::MainLayer()
     GLuint simple_shader =
         rendering::create_graphics_shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
 
-    GLuint simple_vao;
-    GLuint simple_vbo;
+    if (simple_shader == 0)
+    {
+        return;
+    }
 
-    glGenVertexArrays(1, &simple_vao);
-    glGenBuffers(1, &simple_vbo);
+    glGenVertexArrays(1, &m_vao);
+    glGenBuffers(1, &m_vbo);
 
-    glBindVertexArray(simple_vao);
+    glBindVertexArray(m_vao);
 
-    glBindBuffer(GL_ARRAY_BUFFER, simple_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // position
@@ -106,8 +108,8 @@ MainLayer::MainLayer()
     registry.emplace<game::components::Renderable>(stone, voxel::Block::STONE);
 
     m_render_system.set_shader(simple_shader);
-    m_render_system.set_vao(simple_vao);
-    m_render_system.set_vbo(simple_vbo);
+    m_render_system.set_vao(m_vao);
+    m_render_system.set_vbo(m_vbo);
     m_render_system.init();
 
     glEnable(GL_DEPTH_TEST);
@@ -117,7 +119,11 @@ MainLayer::MainLayer()
     m_camera.set_viewport(static_cast<int>(frame_buffer.x), static_cast<int>(frame_buffer.y));
 }
 
-MainLayer::~MainLayer() {}
+MainLayer::~MainLayer()
+{
+    glDeleteVertexArrays(1, &m_vao);
+    glDeleteBuffers(1, &m_vbo);
+}
 
 auto MainLayer::on_update(float time_step) -> void
 {
@@ -249,11 +255,6 @@ auto MainLayer::on_keyboard_input(core::KeyPressedEvent &event) -> bool
 
     return true;
 }
-
-// auto MainLayer::on_mouse_input(core::MouseButtonEvent &event) -> bool
-// {
-//     return true;
-// }
 
 auto MainLayer::on_mouse_move(core::MouseMovedEvent &event) -> bool
 {

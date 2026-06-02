@@ -31,6 +31,7 @@ class RenderSystem
     GLint m_loc_model = -1;
     GLint m_loc_view = -1;
     GLint m_loc_projection = -1;
+    GLint m_loc_colour = -1;
 };
 
 } // namespace game::systems

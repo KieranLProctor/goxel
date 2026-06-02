@@ -23,9 +23,14 @@ auto Window::create() -> void
 {
     glfwSetErrorCallback(glfw_error_callback);
 
-    // TODO: This should be conditional based on OS.
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#else
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+#endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, m_spec.is_resizable ? GLFW_TRUE : GLFW_FALSE);
@@ -272,4 +277,4 @@ auto Window::glfw_error_callback(int error, const char *description) -> void
     spdlog::error("GLFW error {}: {}", error, description);
 }
 
-} // namespace core
+} // namespace goxel::core
