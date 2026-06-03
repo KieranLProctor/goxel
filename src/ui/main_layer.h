@@ -31,8 +31,8 @@ class MainLayer : public core::Layer
     entt::registry &m_registry = game::get_registry();
     entt::entity m_player = entt::null;
 
-    GLuint m_vao;
-    GLuint m_vbo;
+    GLuint m_vao = 0;
+    GLuint m_vbo = 0;
 
     float m_move_speed = 1.0f;
     float m_mouse_sensitivity = 1.0f;

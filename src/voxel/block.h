@@ -35,4 +35,4 @@ inline auto get_block_properties(Block block) -> BlockProperties
     }
 }
 
-} // namespace game
+} // namespace goxel::voxel

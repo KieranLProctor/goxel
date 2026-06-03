@@ -44,6 +44,7 @@ Application::~Application()
     m_window = nullptr;
 
     glfwTerminate();
+    s_application = nullptr;
 }
 
 auto Application::run() -> void

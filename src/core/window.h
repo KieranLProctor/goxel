@@ -30,7 +30,7 @@ class Window
 
     auto create() -> void;
     auto destroy() -> void;
-    auto update() const -> void;
+    auto update() -> void;
 
     auto get_framebuffer_size() const -> glm::vec2;
     auto get_mouse_position() const -> glm::vec2;
@@ -50,4 +50,4 @@ class Window
     GLFWwindow *m_handle = nullptr;
 };
 
-} // namespace core
+} // namespace goxel::core

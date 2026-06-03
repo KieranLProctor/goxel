@@ -71,8 +71,13 @@ auto Window::destroy() -> void
     m_handle = nullptr;
 }
 
-auto Window::update() const -> void
+auto Window::update() -> void
 {
+    if (!m_handle)
+    {
+        return;
+    }
+
     glfwSwapBuffers(m_handle);
 }
 
@@ -86,8 +91,14 @@ auto Window::raise_event(Event &event) const -> void
 
 auto Window::get_framebuffer_size() const -> glm::vec2
 {
+    if (!m_handle)
+    {
+        return {0, 0};
+    }
+
     int width;
     int height;
+
     glfwGetFramebufferSize(m_handle, &width, &height);
 
     return {width, height};
@@ -95,6 +106,11 @@ auto Window::get_framebuffer_size() const -> glm::vec2
 
 auto Window::get_mouse_position() const -> glm::vec2
 {
+    if (!m_handle)
+    {
+        return {0.0f, 0.0f};
+    }
+
     double x;
     double y;
     glfwGetCursorPos(m_handle, &x, &y);
@@ -104,6 +120,11 @@ auto Window::get_mouse_position() const -> glm::vec2
 
 auto Window::set_cursor_captured(bool captured) -> void
 {
+    if (!m_handle)
+    {
+        return;
+    }
+
     glfwSetInputMode(m_handle, GLFW_CURSOR, captured ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
 
     if (glfwRawMouseMotionSupported())
@@ -127,29 +148,34 @@ auto Window::init_callbacks() const -> void
     glfwSetWindowCloseCallback(m_handle,
                                [](GLFWwindow *handle)
                                {
-                                   auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                   auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
+
+                                   if (!window)
+                                   {
+                                       return;
+                                   }
 
                                    WindowClosedEvent event;
-                                   window.raise_event(event);
+                                   window->raise_event(event);
                                });
 
     glfwSetWindowFocusCallback(m_handle,
                                [](GLFWwindow *handle, int focused)
                                {
-                                   auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                   auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                    switch (focused)
                                    {
                                    case GLFW_TRUE:
                                    {
                                        WindowFocussedEvent event;
-                                       window.raise_event(event);
+                                       window->raise_event(event);
                                        break;
                                    }
                                    case GLFW_FALSE:
                                    {
                                        WindowUnfocussedEvent event;
-                                       window.raise_event(event);
+                                       window->raise_event(event);
                                        break;
                                    }
                                    default:;
@@ -159,43 +185,43 @@ auto Window::init_callbacks() const -> void
     glfwSetWindowIconifyCallback(m_handle,
                                  [](GLFWwindow *handle, int iconified)
                                  {
-                                     auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                     auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                      if (iconified == GLFW_TRUE)
                                      {
                                          WindowMinimizedEvent event;
-                                         window.raise_event(event);
+                                         window->raise_event(event);
                                      }
                                  });
 
     glfwSetWindowMaximizeCallback(m_handle,
                                   [](GLFWwindow *handle, int maximize)
                                   {
-                                      auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                      auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                       if (maximize == GLFW_TRUE)
                                       {
                                           WindowMaximizedEvent event;
-                                          window.raise_event(event);
+                                          window->raise_event(event);
                                       }
                                   });
 
     glfwSetWindowSizeCallback(m_handle,
                               [](GLFWwindow *handle, int width, int height)
                               {
-                                  auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                  auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                   WindowResizedEvent event(static_cast<uint32_t>(width), static_cast<uint32_t>(height));
-                                  window.raise_event(event);
+                                  window->raise_event(event);
                               });
 
     glfwSetWindowPosCallback(m_handle,
                              [](GLFWwindow *handle, int x, int y)
                              {
-                                 auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                 auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                  WindowMovedEvent event(x, y);
-                                 window.raise_event(event);
+                                 window->raise_event(event);
                              });
 
     glfwSetKeyCallback(m_handle,
@@ -203,7 +229,7 @@ auto Window::init_callbacks() const -> void
                        {
                            ImGui_ImplGlfw_KeyCallback(handle, key, scancode, action, mods);
 
-                           auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                           auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                            switch (action)
                            {
@@ -211,13 +237,13 @@ auto Window::init_callbacks() const -> void
                            case GLFW_REPEAT:
                            {
                                KeyPressedEvent event(key, action == GLFW_REPEAT);
-                               window.raise_event(event);
+                               window->raise_event(event);
                                break;
                            }
                            case GLFW_RELEASE:
                            {
                                KeyReleasedEvent event(key);
-                               window.raise_event(event);
+                               window->raise_event(event);
                                break;
                            }
                            default:;
@@ -229,20 +255,20 @@ auto Window::init_callbacks() const -> void
                                {
                                    ImGui_ImplGlfw_MouseButtonCallback(handle, button, action, mods);
 
-                                   auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                   auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                    switch (action)
                                    {
                                    case GLFW_PRESS:
                                    {
                                        MouseButtonPressedEvent event(button);
-                                       window.raise_event(event);
+                                       window->raise_event(event);
                                        break;
                                    }
                                    case GLFW_RELEASE:
                                    {
                                        MouseButtonReleasedEvent event(button);
-                                       window.raise_event(event);
+                                       window->raise_event(event);
                                        break;
                                    }
                                    default:;
@@ -254,10 +280,10 @@ auto Window::init_callbacks() const -> void
                           {
                               ImGui_ImplGlfw_ScrollCallback(handle, x_offset, y_offset);
 
-                              auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                              auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                               MouseScrolledEvent event(x_offset, y_offset);
-                              window.raise_event(event);
+                              window->raise_event(event);
                           });
 
     glfwSetCursorPosCallback(m_handle,
@@ -265,10 +291,10 @@ auto Window::init_callbacks() const -> void
                              {
                                  ImGui_ImplGlfw_CursorPosCallback(handle, x, y);
 
-                                 auto &window = *static_cast<Window *>(glfwGetWindowUserPointer(handle));
+                                 auto *window = static_cast<Window *>(glfwGetWindowUserPointer(handle));
 
                                  MouseMovedEvent event(x, y);
-                                 window.raise_event(event);
+                                 window->raise_event(event);
                              });
 }
 

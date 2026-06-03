@@ -142,7 +142,7 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
     GLuint fragment_shader_handle = glCreateShader(GL_FRAGMENT_SHADER);
 
     source = fragment_shader_source.c_str();
-    glShaderSource(fragment_shader_handle, 1, &source, 0);
+    glShaderSource(fragment_shader_handle, 1, &source, nullptr);
 
     glCompileShader(fragment_shader_handle);
 

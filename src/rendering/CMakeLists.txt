@@ -12,6 +12,7 @@ target_sources(goxel_rendering PUBLIC FILE_SET HEADERS
         renderer.h
         shader.h
         camera.h
+        handles.h
 )
 
 add_library(goxel::rendering ALIAS goxel_rendering)
@@ -19,3 +20,5 @@ add_library(goxel::rendering ALIAS goxel_rendering)
 target_link_libraries(goxel_rendering PUBLIC
         goxel::core
 )
+
+target_include_directories(goxel_rendering PRIVATE ${CMAKE_SOURCE_DIR}/external)

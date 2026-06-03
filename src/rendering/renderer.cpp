@@ -2,9 +2,8 @@
 
 #include "spdlog/spdlog.h"
 
-// TODO: Improve this.
 #define STB_IMAGE_IMPLEMENTATION
-#include "../../external/stb/stb_image.h"
+#include "stb/stb_image.h"
 
 namespace goxel::rendering
 {
@@ -45,11 +44,24 @@ auto load_texture(const std::filesystem::path &path) -> Texture
     }
 
     GLenum base_format, internal_format;
-    switch (channels) {
-    case 4: base_format = GL_RGBA; internal_format = GL_RGBA8; break;
-    case 3: base_format = GL_RGB;  internal_format = GL_RGB8;  break;
-    case 1: base_format = GL_RED;  internal_format = GL_R8;    break;
-    default: spdlog::error("Unsupported channel count: {}", channels); stbi_image_free(data); return {};
+    switch (channels)
+    {
+    case 4:
+        base_format = GL_RGBA;
+        internal_format = GL_RGBA8;
+        break;
+    case 3:
+        base_format = GL_RGB;
+        internal_format = GL_RGB8;
+        break;
+    case 1:
+        base_format = GL_RED;
+        internal_format = GL_R8;
+        break;
+    default:
+        spdlog::error("Unsupported channel count: {}", channels);
+        stbi_image_free(data);
+        return {};
     }
 
     Texture result;
@@ -105,7 +117,7 @@ auto attach_texture_to_framebuffer(const Framebuffer &framebuffer, const Texture
     return true;
 }
 
-auto blit_framebuffer_to_swapchain(const Framebuffer framebuffer) -> void
+auto blit_framebuffer_to_swapchain(const Framebuffer &framebuffer) -> void
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer.handle);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -113,6 +125,8 @@ auto blit_framebuffer_to_swapchain(const Framebuffer framebuffer) -> void
     glBlitFramebuffer(0, 0, framebuffer.colour_attachment.width, framebuffer.colour_attachment.height, 0, 0,
                       framebuffer.colour_attachment.width, framebuffer.colour_attachment.height, GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 }
 
-} // namespace rendering
+} // namespace goxel::rendering
