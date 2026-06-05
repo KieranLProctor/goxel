@@ -18,7 +18,7 @@ MainLayer::MainLayer()
 {
     spdlog::info("created MainLayer!");
 
-    float vertices[] = {
+    constexpr float vertices[] = {
         // Front face (+Z)
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f,
@@ -68,7 +68,7 @@ MainLayer::MainLayer()
         -1.0f, -1.0f, -1.0f,
     };
 
-    GLuint simple_shader =
+    const GLuint simple_shader =
         rendering::create_graphics_shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
 
     if (simple_shader == 0)
@@ -93,17 +93,17 @@ MainLayer::MainLayer()
 
     auto &registry = game::get_registry();
 
-    auto grass = registry.create();
+    const auto grass = registry.create();
     registry.emplace<game::components::Transform>(grass, glm::vec3(0.0f, 0.0f, 0.0f));
     registry.emplace<game::components::Renderable>(grass, voxel::Block::GRASS);
 
     // Dirt below
-    auto dirt = registry.create();
+    const auto dirt = registry.create();
     registry.emplace<game::components::Transform>(dirt, glm::vec3(3.0f, 0.0f, 0.0f));
     registry.emplace<game::components::Renderable>(dirt, voxel::Block::DIRT);
 
     // Stone
-    auto stone = registry.create();
+    const auto stone = registry.create();
     registry.emplace<game::components::Transform>(stone, glm::vec3(6.0f, 0.0f, 0.0f));
     registry.emplace<game::components::Renderable>(stone, voxel::Block::STONE);
 
@@ -125,7 +125,7 @@ MainLayer::~MainLayer()
     glDeleteBuffers(1, &m_vbo);
 }
 
-auto MainLayer::on_update(float time_step) -> void
+auto MainLayer::on_update(const float time_step) -> void
 {
     auto *window = core::Application::get().get_window()->get_handle();
 
@@ -182,10 +182,10 @@ auto MainLayer::on_render() -> void
     ImGui::Text("Eye:   %.2f, %.2f, %.2f", eye.x, eye.y, eye.z);
 
     // Direction vectors
-    auto look = m_camera.get_look();
-    auto front = m_camera.get_front();
-    auto right = m_camera.get_right();
-    auto up = m_camera.get_up();
+    const auto look = m_camera.get_look();
+    const auto front = m_camera.get_front();
+    const auto right = m_camera.get_right();
+    const auto up = m_camera.get_up();
     ImGui::SeparatorText("Vectors");
     ImGui::Text("Look:  %.2f, %.2f, %.2f", look.x, look.y, look.z);
     ImGui::Text("Front: %.2f, %.2f, %.2f", front.x, front.y, front.z);
@@ -229,7 +229,7 @@ auto MainLayer::on_event(core::Event &event) -> void
     dispatcher.dispatch<core::MouseMovedEvent>([this](core::MouseMovedEvent &e) { return on_mouse_move(e); });
 }
 
-auto MainLayer::on_keyboard_input(core::KeyPressedEvent &event) -> bool
+auto MainLayer::on_keyboard_input(const core::KeyPressedEvent &event) -> bool
 {
     if (event.get_key_code() == GLFW_KEY_F5)
     {
@@ -256,7 +256,7 @@ auto MainLayer::on_keyboard_input(core::KeyPressedEvent &event) -> bool
     return true;
 }
 
-auto MainLayer::on_mouse_move(core::MouseMovedEvent &event) -> bool
+auto MainLayer::on_mouse_move(const core::MouseMovedEvent &event) -> bool
 {
     if (!m_cursor_captured)
     {

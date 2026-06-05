@@ -35,7 +35,7 @@ class Application
         m_layer_stack.push_back(std::make_unique<TLayer>(std::forward<Args>(args)...));
     }
 
-    auto get_framebuffer_size() -> glm::vec2;
+    auto get_framebuffer_size() const -> glm::vec2;
     auto get_window() -> std::shared_ptr<Window>;
 
     static auto get_time() -> double;

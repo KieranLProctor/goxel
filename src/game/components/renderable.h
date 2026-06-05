@@ -9,7 +9,7 @@ struct Renderable
 {
     voxel::Block block_type = voxel::Block::STONE;
 
-    explicit Renderable(voxel::Block type = voxel::Block::STONE) : block_type(type) {}
+    explicit Renderable(const voxel::Block type = voxel::Block::STONE) : block_type(type) {}
 };
 
 } // namespace game::components

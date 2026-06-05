@@ -16,7 +16,7 @@ auto Camera::get_mode() const -> CameraMode
     return m_mode;
 }
 
-auto Camera::set_mode(CameraMode mode) -> void
+auto Camera::set_mode(const CameraMode mode) -> void
 {
     m_mode = mode;
 }
@@ -48,7 +48,7 @@ auto Camera::get_position() const -> glm::vec3
     return m_position;
 }
 
-auto Camera::set_position(glm::vec3 position) -> void
+auto Camera::set_position(const glm::vec3 position) -> void
 {
     m_position = position;
 }
@@ -83,13 +83,13 @@ auto Camera::get_right() const -> glm::vec3
     return m_right;
 }
 
-auto Camera::adjust_pitch(float delta) -> void
+auto Camera::adjust_pitch(const float delta) -> void
 {
     m_pitch = glm::clamp(m_pitch + delta, -k_pitch_limit, k_pitch_limit);
     update_vectors();
 }
 
-auto Camera::adjust_yaw(float delta) -> void
+auto Camera::adjust_yaw(const float delta) -> void
 {
     m_yaw += delta;
     if (m_yaw > 180.0f)
@@ -105,12 +105,12 @@ auto Camera::adjust_yaw(float delta) -> void
     update_vectors();
 }
 
-auto Camera::translate(glm::vec3 delta) -> void
+auto Camera::translate(const glm::vec3 delta) -> void
 {
     m_position += delta;
 }
 
-auto Camera::set_viewport(int width, int height) -> void
+auto Camera::set_viewport(const int width, const int height) -> void
 {
     m_width = width;
     m_height = height;
@@ -121,7 +121,7 @@ auto Camera::get_fov() const -> float
     return m_fov;
 }
 
-auto Camera::set_fov(float fov) -> void
+auto Camera::set_fov(const float fov) -> void
 {
     m_fov = glm::clamp(fov, 1.0f, 170.0f);
 }
@@ -141,7 +141,7 @@ auto Camera::get_zoom() const -> float
     return m_zoom;
 }
 
-auto Camera::set_zoom(float zoom) -> void
+auto Camera::set_zoom(const float zoom) -> void
 {
     m_zoom = glm::clamp(zoom, 1.0f, 10.0f);
 }

@@ -16,7 +16,7 @@ class KeyEvent : public Event
     };
 
   protected:
-    explicit KeyEvent(int key_code) : m_key_code(key_code) {}
+    explicit KeyEvent(const int key_code) : m_key_code(key_code) {}
 
   private:
     int m_key_code;
@@ -25,7 +25,7 @@ class KeyEvent : public Event
 class KeyPressedEvent : public KeyEvent
 {
   public:
-    KeyPressedEvent(int key_code, bool is_repeat) : KeyEvent(key_code), m_is_repeat(is_repeat) {}
+    KeyPressedEvent(const int key_code, const bool is_repeat) : KeyEvent(key_code), m_is_repeat(is_repeat) {}
 
     auto is_repeat() const -> bool
     {
@@ -46,7 +46,7 @@ class KeyPressedEvent : public KeyEvent
 class KeyReleasedEvent : public KeyEvent
 {
   public:
-    explicit KeyReleasedEvent(int key_code) : KeyEvent(key_code) {}
+    explicit KeyReleasedEvent(const int key_code) : KeyEvent(key_code) {}
 
     auto to_string() const -> std::string override
     {
@@ -59,7 +59,7 @@ class KeyReleasedEvent : public KeyEvent
 class MouseMovedEvent : public Event
 {
   public:
-    MouseMovedEvent(double x, double y) : m_mouse_x(x), m_mouse_y(y)
+    MouseMovedEvent(const double x, const double y) : m_mouse_x(x), m_mouse_y(y)
     {
         m_mouse_dx = x - s_last_x;
         m_mouse_dy = y - s_last_y;
@@ -106,7 +106,7 @@ class MouseMovedEvent : public Event
 class MouseScrolledEvent : public Event
 {
   public:
-    MouseScrolledEvent(double x_offset, double y_offset) : m_x_offset(x_offset), m_y_offset(y_offset) {}
+    MouseScrolledEvent(const double x_offset, const double y_offset) : m_x_offset(x_offset), m_y_offset(y_offset) {}
 
     auto get_x_offset() const -> double
     {
@@ -138,7 +138,7 @@ class MouseButtonEvent : public Event
     }
 
   protected:
-    explicit MouseButtonEvent(int button) : m_button(button) {}
+    explicit MouseButtonEvent(const int button) : m_button(button) {}
 
   private:
     int m_button;
@@ -147,7 +147,7 @@ class MouseButtonEvent : public Event
 class MouseButtonPressedEvent : public MouseButtonEvent
 {
   public:
-    explicit MouseButtonPressedEvent(int button) : MouseButtonEvent(button) {}
+    explicit MouseButtonPressedEvent(const int button) : MouseButtonEvent(button) {}
 
     auto to_string() const -> std::string override
     {
@@ -160,7 +160,7 @@ class MouseButtonPressedEvent : public MouseButtonEvent
 class MouseButtonReleasedEvent : public MouseButtonEvent
 {
   public:
-    explicit MouseButtonReleasedEvent(int button) : MouseButtonEvent(button) {}
+    explicit MouseButtonReleasedEvent(const int button) : MouseButtonEvent(button) {}
 
     auto to_string() const -> std::string override
     {

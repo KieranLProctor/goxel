@@ -20,10 +20,10 @@ class OverlayLayer : public core::Layer
   private:
     bool m_show_menu_bar = false;
 
-    auto show_menu_bar(bool is_visible) -> void;
+    static auto show_menu_bar(bool is_visible) -> void;
 
-    auto on_mouse_button_input(core::MouseButtonPressedEvent &event) -> bool;
-    auto on_keyboard_input(core::KeyPressedEvent &event) -> bool;
+    static auto on_mouse_button_input(const core::MouseButtonPressedEvent &event) -> bool;
+    auto on_keyboard_input(const core::KeyPressedEvent &event) -> bool;
 };
 
 } // namespace ui

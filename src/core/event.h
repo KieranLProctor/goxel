@@ -63,7 +63,7 @@ class Event
 class EventDispatcher
 {
   public:
-    EventDispatcher(Event &event) : m_event(event) {}
+    explicit EventDispatcher(Event &event) : m_event(event) {}
 
     template <typename T, typename F> bool dispatch(F &&func)
     {

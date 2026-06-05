@@ -51,7 +51,7 @@ auto RenderSystem::update() -> void
     auto &registry = get_registry();
     auto render_view = registry.view<components::Transform, components::Renderable>();
 
-    for (auto entity : render_view)
+    for (const auto entity : render_view)
     {
         auto &transform = render_view.get<components::Transform>(entity);
         auto &renderable = render_view.get<components::Renderable>(entity);
@@ -71,7 +71,7 @@ auto RenderSystem::update() -> void
     glUseProgram(0);
 }
 
-auto RenderSystem::set_shader(GLuint shader) -> void
+auto RenderSystem::set_shader(const GLuint shader) -> void
 {
     m_shader = shader;
     m_loc_model = glGetUniformLocation(m_shader, "uModel");
@@ -80,17 +80,17 @@ auto RenderSystem::set_shader(GLuint shader) -> void
     m_loc_colour = glGetUniformLocation(m_shader, "uBlockColour");
 }
 
-auto RenderSystem::set_vao(GLuint vao) -> void
+auto RenderSystem::set_vao(const GLuint vao) -> void
 {
     m_vao = vao;
 }
 
-auto RenderSystem::set_vbo(GLuint vbo) -> void
+auto RenderSystem::set_vbo(const GLuint vbo) -> void
 {
     m_vbo = vbo;
 }
 
-auto RenderSystem::get_block_colour(voxel::Block block) -> glm::vec3
+auto RenderSystem::get_block_colour(const voxel::Block block) -> glm::vec3
 {
     switch (block)
     {

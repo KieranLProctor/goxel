@@ -49,7 +49,7 @@ class WindowMaximizedEvent : public Event
 class WindowResizedEvent : public Event
 {
   public:
-    WindowResizedEvent(uint32_t width, uint32_t height) : m_width(width), m_height(height) {}
+    WindowResizedEvent(const uint32_t width, const uint32_t height) : m_width(width), m_height(height) {}
 
     auto get_width() const -> uint32_t
     {
@@ -75,7 +75,7 @@ class WindowResizedEvent : public Event
 class WindowMovedEvent : public Event
 {
   public:
-    WindowMovedEvent(int x, int y) : m_x(x), m_y(y) {}
+    WindowMovedEvent(const int x, const int y) : m_x(x), m_y(y) {}
 
     auto get_x() const -> int
     {

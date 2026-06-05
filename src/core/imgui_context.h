@@ -34,19 +34,19 @@ class ImGuiContext
     ImGuiContext(const ImGuiContext &) = delete;
     ImGuiContext &operator=(const ImGuiContext &) = delete;
 
-    auto begin_frame() -> void
+    static auto begin_frame() -> void
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
-    auto end_frame() -> void
+    static auto end_frame() -> void
     {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
-    auto apply_dark_theme() -> void
+    static auto apply_dark_theme() -> void
     {
         auto &style = ImGui::GetStyle();
         auto &colours = style.Colors;

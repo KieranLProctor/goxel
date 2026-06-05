@@ -24,7 +24,7 @@ struct BlockProperties
     bool is_transparent = false;
 };
 
-inline auto get_block_properties(Block block) -> BlockProperties
+inline auto get_block_properties(const Block block) -> BlockProperties
 {
     switch (block)
     {

@@ -64,18 +64,18 @@ auto Application::run() -> void
             break;
         }
 
-        auto current_time = get_time();
-        auto timestep = static_cast<float>(glm::clamp(current_time - last_time, 0.001, 0.1));
+        const auto current_time = get_time();
+        const auto timestep = static_cast<float>(glm::clamp(current_time - last_time, 0.001, 0.1));
         last_time = current_time;
 
-        for (auto &layer : m_layer_stack)
+        for (const auto &layer : m_layer_stack)
         {
             layer->on_update(timestep);
         }
 
         m_imgui->begin_frame();
 
-        for (auto &layer : m_layer_stack)
+        for (const auto &layer : m_layer_stack)
         {
             layer->on_render();
         }
@@ -93,7 +93,7 @@ auto Application::stop() -> void
 
 auto Application::raise_event(Event &event) -> void
 {
-    for (auto &layer : std::views::reverse(m_layer_stack))
+    for (const auto &layer : std::views::reverse(m_layer_stack))
     {
         layer->on_event(event);
         if (event.handled())
@@ -103,7 +103,7 @@ auto Application::raise_event(Event &event) -> void
     }
 }
 
-auto Application::get_framebuffer_size() -> glm::vec2
+auto Application::get_framebuffer_size() const -> glm::vec2
 {
     return m_window->get_framebuffer_size();
 }

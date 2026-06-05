@@ -25,13 +25,13 @@ auto read_text_file(const std::filesystem::path &path) -> std::string
 
 auto create_compute_shader(const std::filesystem::path &path) -> GLuint
 {
-    std::string shader_source = read_text_file(path);
+    const std::string shader_source = read_text_file(path);
     if (shader_source.empty())
     {
         return 0;
     }
 
-    GLuint shader_handle = glCreateShader(GL_COMPUTE_SHADER);
+    const GLuint shader_handle = glCreateShader(GL_COMPUTE_SHADER);
 
     const GLchar *source = shader_source.c_str();
     glShaderSource(shader_handle, 1, &source, nullptr);
@@ -55,7 +55,7 @@ auto create_compute_shader(const std::filesystem::path &path) -> GLuint
         return 0;
     }
 
-    GLuint program = glCreateProgram();
+    const GLuint program = glCreateProgram();
     glAttachShader(program, shader_handle);
     glLinkProgram(program);
 
@@ -83,9 +83,9 @@ auto create_compute_shader(const std::filesystem::path &path) -> GLuint
     return program;
 }
 
-auto reload_compute_shader(uint32_t shader_handle, const std::filesystem::path &path) -> GLuint
+auto reload_compute_shader(const uint32_t shader_handle, const std::filesystem::path &path) -> GLuint
 {
-    GLuint new_shader_handle = create_compute_shader(path);
+    const GLuint new_shader_handle = create_compute_shader(path);
 
     // Return old shader if compilation failed
     if (new_shader_handle == 0)
@@ -103,8 +103,8 @@ auto reload_compute_shader(uint32_t shader_handle, const std::filesystem::path &
 auto create_graphics_shader(const std::filesystem::path &vertex_path, const std::filesystem::path &fragment_path)
     -> GLuint
 {
-    std::string vertex_shader_source = read_text_file(vertex_path);
-    std::string fragment_shader_source = read_text_file(fragment_path);
+    const std::string vertex_shader_source = read_text_file(vertex_path);
+    const std::string fragment_shader_source = read_text_file(fragment_path);
 
     if (vertex_shader_source.empty() || fragment_shader_source.empty())
     {
@@ -113,7 +113,7 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 
     // Vertex shader
 
-    GLuint vertex_shader_handle = glCreateShader(GL_VERTEX_SHADER);
+    const GLuint vertex_shader_handle = glCreateShader(GL_VERTEX_SHADER);
 
     const GLchar *source = vertex_shader_source.c_str();
     glShaderSource(vertex_shader_handle, 1, &source, nullptr);
@@ -139,7 +139,7 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 
     // Fragment shader
 
-    GLuint fragment_shader_handle = glCreateShader(GL_FRAGMENT_SHADER);
+    const GLuint fragment_shader_handle = glCreateShader(GL_FRAGMENT_SHADER);
 
     source = fragment_shader_source.c_str();
     glShaderSource(fragment_shader_handle, 1, &source, nullptr);
@@ -166,7 +166,7 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 
     // Program linking
 
-    GLuint program = glCreateProgram();
+    const GLuint program = glCreateProgram();
     glAttachShader(program, vertex_shader_handle);
     glAttachShader(program, fragment_shader_handle);
     glLinkProgram(program);
@@ -201,7 +201,7 @@ auto create_graphics_shader(const std::filesystem::path &vertex_path, const std:
 auto reload_graphics_shader(uint32_t shader_handle, const std::filesystem::path &vertex_path,
                             const std::filesystem::path &fragment_path) -> GLuint
 {
-    GLuint new_shader_handle = create_graphics_shader(vertex_path, fragment_path);
+    const GLuint new_shader_handle = create_graphics_shader(vertex_path, fragment_path);
 
     // Return old shader if compilation failed
     if (new_shader_handle == 0)

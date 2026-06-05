@@ -30,12 +30,12 @@ class Window
 
     auto create() -> void;
     auto destroy() -> void;
-    auto update() -> void;
+    auto update() const -> void;
 
     auto get_framebuffer_size() const -> glm::vec2;
     auto get_mouse_position() const -> glm::vec2;
 
-    auto set_cursor_captured(bool capture) -> void;
+    auto set_cursor_captured(bool capture) const -> void;
 
     auto should_close() const -> bool;
 

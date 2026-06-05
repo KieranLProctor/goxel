@@ -6,7 +6,7 @@
 namespace goxel::ui
 {
 
-OverlayLayer::OverlayLayer() {}
+OverlayLayer::OverlayLayer() = default;
 
 auto OverlayLayer::on_event(core::Event &event) -> void
 {
@@ -24,7 +24,7 @@ auto OverlayLayer::on_render() -> void
     show_menu_bar(m_show_menu_bar);
 }
 
-auto OverlayLayer::show_menu_bar(bool is_visible) -> void
+auto OverlayLayer::show_menu_bar(const bool is_visible) -> void
 {
     if (!is_visible)
     {
@@ -172,9 +172,9 @@ auto OverlayLayer::show_menu_bar(bool is_visible) -> void
     }
 }
 
-auto OverlayLayer::on_mouse_button_input(core::MouseButtonPressedEvent &event) -> bool
+auto OverlayLayer::on_mouse_button_input(const core::MouseButtonPressedEvent &event) -> bool
 {
-    ImGuiIO &io = ImGui::GetIO();
+    const ImGuiIO &io = ImGui::GetIO();
 
     auto event_type = event.get_event_type();
     if (event_type == core::EventType::MOUSE_BUTTON_PRESSED && io.WantCaptureMouse ||
@@ -186,7 +186,7 @@ auto OverlayLayer::on_mouse_button_input(core::MouseButtonPressedEvent &event) -
     return false;
 }
 
-auto OverlayLayer::on_keyboard_input(core::KeyPressedEvent &event) -> bool
+auto OverlayLayer::on_keyboard_input(const core::KeyPressedEvent &event) -> bool
 {
     if (event.get_key_code() == GLFW_KEY_LEFT_ALT && !event.is_repeat())
     {

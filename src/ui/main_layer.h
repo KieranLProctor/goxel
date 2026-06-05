@@ -20,9 +20,9 @@ class MainLayer : public core::Layer
     auto on_render() -> void override;
     auto on_event(core::Event &event) -> void override;
 
-    auto on_keyboard_input(core::KeyPressedEvent &event) -> bool;
+    auto on_keyboard_input(const core::KeyPressedEvent &event) -> bool;
     // auto on_mouse_input(core::MouseButtonEvent &event) -> bool;
-    auto on_mouse_move(core::MouseMovedEvent &event) -> bool;
+    auto on_mouse_move(const core::MouseMovedEvent &event) -> bool;
 
   private:
     rendering::Camera m_camera{-90.0f, 0.0f};
