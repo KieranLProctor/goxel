@@ -5,6 +5,7 @@
 #include "ecs.h"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 namespace goxel::game::systems
 {
@@ -55,7 +56,9 @@ auto RenderSystem::update() -> void
         auto &transform = render_view.get<components::Transform>(entity);
         auto &renderable = render_view.get<components::Renderable>(entity);
 
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position);
+        // glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position);
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position) * glm::mat4_cast(transform.rotation) *
+                          glm::scale(glm::mat4(1.0f), transform.scale);
         glm::vec3 colour = get_block_colour(renderable.block_type);
 
         glUniformMatrix4fv(m_loc_model, 1, GL_FALSE, &model[0][0]);
