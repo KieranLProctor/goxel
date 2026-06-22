@@ -32,6 +32,7 @@ class Camera
     auto get_front() const -> glm::vec3;
     auto get_up() const -> glm::vec3;
     auto get_right() const -> glm::vec3;
+    auto get_world_up() const -> glm::vec3;
 
     auto adjust_pitch(float delta) -> void;
     auto adjust_yaw(float delta) -> void;

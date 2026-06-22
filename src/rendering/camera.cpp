@@ -83,6 +83,11 @@ auto Camera::get_right() const -> glm::vec3
     return m_right;
 }
 
+auto Camera::get_world_up() const -> glm::vec3
+{
+    return m_world_up;
+}
+
 auto Camera::adjust_pitch(const float delta) -> void
 {
     m_pitch = glm::clamp(m_pitch + delta, -k_pitch_limit, k_pitch_limit);

@@ -4,8 +4,6 @@
 #include "components/renderable.h"
 #include "components/transform.h"
 #include "glad/glad.h"
-#include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
 #include "glm/glm.hpp"
 #include "imgui.h"
 #include "shader.h"
@@ -149,11 +147,11 @@ auto MainLayer::on_update(const float time_step) -> void
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        move += m_camera.get_up();
+        move += m_camera.get_world_up();
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        move -= m_camera.get_up();
+        move -= m_camera.get_world_up();
     }
 
     if (glm::length(move) > 0.0f)
@@ -177,7 +175,7 @@ auto MainLayer::on_render() -> void
     ImGui::Begin("Camera Debug");
 
     // Eye position
-    auto eye = m_camera.get_position();
+    const auto eye = m_camera.get_position();
     ImGui::SeparatorText("Position");
     ImGui::Text("Eye:   %.2f, %.2f, %.2f", eye.x, eye.y, eye.z);
 
@@ -186,11 +184,13 @@ auto MainLayer::on_render() -> void
     const auto front = m_camera.get_front();
     const auto right = m_camera.get_right();
     const auto up = m_camera.get_up();
+    const auto world_up = m_camera.get_world_up();
     ImGui::SeparatorText("Vectors");
     ImGui::Text("Look:  %.2f, %.2f, %.2f", look.x, look.y, look.z);
     ImGui::Text("Front: %.2f, %.2f, %.2f", front.x, front.y, front.z);
     ImGui::Text("Right: %.2f, %.2f, %.2f", right.x, right.y, right.z);
     ImGui::Text("Up:    %.2f, %.2f, %.2f", up.x, up.y, up.z);
+    ImGui::Text("W Up:  %.2f, %.2f, %.2f", world_up.x, world_up.y, world_up.z);
 
     // View stuff
     ImGui::SeparatorText("View");
@@ -263,8 +263,8 @@ auto MainLayer::on_mouse_move(const core::MouseMovedEvent &event) -> bool
         return true;
     }
 
-    m_camera.adjust_yaw(event.get_dx() * k_base_sensitivity * m_mouse_sensitivity);
-    m_camera.adjust_pitch(-event.get_dy() * k_base_sensitivity * m_mouse_sensitivity);
+    m_camera.adjust_yaw(static_cast<float>(event.get_dx() * k_base_sensitivity * m_mouse_sensitivity));
+    m_camera.adjust_pitch(static_cast<float>(-event.get_dy() * k_base_sensitivity * m_mouse_sensitivity));
 
     return true;
 }
