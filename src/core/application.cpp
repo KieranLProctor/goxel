@@ -31,7 +31,7 @@ Application::Application(ApplicationSpec spec) : m_spec(std::move(spec))
     m_window->create();
 
     m_imgui.emplace(m_window->get_handle());
-    m_imgui->apply_dark_theme();
+    rendering::ImGuiContext::apply_dark_theme();
 
     m_window->init_callbacks();
 }
@@ -73,14 +73,14 @@ auto Application::run() -> void
             layer->on_update(timestep);
         }
 
-        m_imgui->begin_frame();
+        rendering::ImGuiContext::begin_frame();
 
         for (const auto &layer : m_layer_stack)
         {
             layer->on_render();
         }
 
-        m_imgui->end_frame();
+        rendering::ImGuiContext::end_frame();
 
         m_window->update();
     }

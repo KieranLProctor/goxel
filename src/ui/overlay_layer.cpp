@@ -1,12 +1,18 @@
 #include "overlay_layer.h"
 
 #include "GLFW/glfw3.h"
+#include "camera.h"
+#include "ecs.h"
 #include "imgui.h"
+#include "spdlog/spdlog.h"
 
 namespace goxel::ui
 {
 
-OverlayLayer::OverlayLayer() = default;
+OverlayLayer::OverlayLayer()
+{
+    spdlog::info("created OverlayLayer");
+};
 
 auto OverlayLayer::on_event(core::Event &event) -> void
 {
@@ -21,7 +27,71 @@ auto OverlayLayer::on_update(float time_step) -> void {}
 
 auto OverlayLayer::on_render() -> void
 {
+    auto &camera = game::get_registry().ctx().get<rendering::Camera>();
+
     show_menu_bar(m_show_menu_bar);
+
+    // --- ImGui debug overlay ---
+    ImGui::Begin("Camera Debug");
+
+    // Eye position
+    const auto eye = camera.get_position();
+    ImGui::SeparatorText("Position");
+    ImGui::Text("Eye:   %.2f, %.2f, %.2f", eye.x, eye.y, eye.z);
+
+    // Direction vectors
+    const auto look = camera.get_look();
+    const auto front = camera.get_front();
+    const auto right = camera.get_right();
+    const auto up = camera.get_up();
+    const auto world_up = camera.get_world_up();
+    ImGui::SeparatorText("Vectors");
+    ImGui::Text("Look:  %.2f, %.2f, %.2f", look.x, look.y, look.z);
+    ImGui::Text("Front: %.2f, %.2f, %.2f", front.x, front.y, front.z);
+    ImGui::Text("Right: %.2f, %.2f, %.2f", right.x, right.y, right.z);
+    ImGui::Text("Up:    %.2f, %.2f, %.2f", up.x, up.y, up.z);
+    ImGui::Text("W Up:  %.2f, %.2f, %.2f", world_up.x, world_up.y, world_up.z);
+
+    // View stuff
+    ImGui::SeparatorText("View");
+
+    auto fov = camera.get_fov();
+    // ImGui::Text("FOV: %.2f", fov);
+    if (ImGui::SliderFloat("FOV", &fov, 1.0f, 170.0f))
+    {
+        camera.set_fov(fov);
+    }
+
+    auto zoom = camera.get_zoom();
+    // ImGui::Text("Zoom: %.2f", camera.get_zoom());
+    if (ImGui::SliderFloat("ZOOM", &zoom, 1.0f, 10.0f))
+    {
+        camera.set_zoom(zoom);
+    }
+
+    ImGui::Text("Near plane: %.2f", camera.get_near_plane());
+    ImGui::Text("Far plane: %.2f", camera.get_far_plane());
+
+    // Yaw / pitch - expose these via getters if you don't have them
+    ImGui::SeparatorText("Orientation");
+    ImGui::Text("Yaw:   %.2f", camera.get_yaw());
+    ImGui::Text("Pitch: %.2f", camera.get_pitch());
+
+    // Camera mode
+    ImGui::SeparatorText("Mode");
+    auto mode_str = "Unknown";
+    switch (camera.get_mode())
+    {
+    case rendering::CameraMode::FIRST_PERSON: mode_str = "First Person"; break;
+    case rendering::CameraMode::THIRD_PERSON: mode_str = "Third Person Back"; break;
+    case rendering::CameraMode::THIRD_PERSON_SELF: mode_str = "Third Person Front"; break;
+    }
+    ImGui::Text("Mode: %s", mode_str);
+    if (ImGui::Button("Cycle Mode (F5)"))
+    {
+        camera.cycle_mode();
+    }
+    ImGui::End();
 }
 
 auto OverlayLayer::show_menu_bar(const bool is_visible) -> void
@@ -176,8 +246,8 @@ auto OverlayLayer::on_mouse_button_input(const core::MouseButtonPressedEvent &ev
 {
     const ImGuiIO &io = ImGui::GetIO();
 
-    auto event_type = event.get_event_type();
-    if (event_type == core::EventType::MOUSE_BUTTON_PRESSED && io.WantCaptureMouse ||
+    if (const auto event_type = event.get_event_type();
+        event_type == core::EventType::MOUSE_BUTTON_PRESSED && io.WantCaptureMouse ||
         event_type == core::EventType::MOUSE_BUTTON_RELEASED && io.WantCaptureMouse)
     {
         return true;

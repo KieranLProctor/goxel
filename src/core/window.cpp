@@ -38,7 +38,7 @@ auto Window::create() -> void
     float x_scale = 1.0f;
     float y_scale = 1.0f;
     glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), &x_scale, &y_scale);
-    float scale = std::max(x_scale, y_scale);
+    const float scale = std::max(x_scale, y_scale);
 
     m_handle = glfwCreateWindow(static_cast<int>(m_spec.width * scale), static_cast<int>(m_spec.height * scale),
                                 m_spec.title.c_str(), nullptr, nullptr);

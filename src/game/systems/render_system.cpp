@@ -10,7 +10,7 @@
 namespace goxel::game::systems
 {
 
-RenderSystem::RenderSystem(rendering::Camera &camera) : m_camera(camera) {}
+// RenderSystem::RenderSystem(rendering::Camera &camera) : m_camera(camera) {}
 
 RenderSystem::~RenderSystem()
 {
@@ -32,7 +32,7 @@ auto RenderSystem::init() -> void
     m_loc_colour = glGetUniformLocation(m_shader, "uBlockColour");
 }
 
-auto RenderSystem::update() -> void
+auto RenderSystem::update() const -> void
 {
     if (m_shader == 0 || m_vao == 0)
     {
@@ -42,13 +42,19 @@ auto RenderSystem::update() -> void
     glUseProgram(m_shader);
     glBindVertexArray(m_vao);
 
-    glm::mat4 view = m_camera.get_view_matrix();
-    glm::mat4 projection = m_camera.get_projection_matrix();
+    auto &registry = get_registry();
+    const auto &camera = registry.ctx().get<rendering::Camera>();
+
+    glm::mat4 view = camera.get_view_matrix();
+    glm::mat4 projection = camera.get_projection_matrix();
+
+    // glm::mat4 view = m_camera.get_view_matrix();
+    // glm::mat4 projection = m_camera.get_projection_matrix();
 
     glUniformMatrix4fv(m_loc_view, 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(m_loc_projection, 1, GL_FALSE, &projection[0][0]);
 
-    auto &registry = get_registry();
+    // auto &registry = get_registry();
     auto render_view = registry.view<components::Transform, components::Renderable>();
 
     for (const auto entity : render_view)

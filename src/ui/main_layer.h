@@ -25,8 +25,10 @@ class MainLayer : public core::Layer
     auto on_mouse_move(const core::MouseMovedEvent &event) -> bool;
 
   private:
-    rendering::Camera m_camera{-90.0f, 0.0f};
-    game::systems::RenderSystem m_render_system{m_camera};
+    // rendering::Camera m_camera{-90.0f, 0.0f};
+    // game::systems::RenderSystem m_render_system{m_camera};
+
+    game::systems::RenderSystem m_render_system;
 
     entt::registry &m_registry = game::get_registry();
     entt::entity m_player = entt::null;
@@ -37,6 +39,7 @@ class MainLayer : public core::Layer
     float m_move_speed = 1.0f;
     float m_mouse_sensitivity = 1.0f;
     bool m_cursor_captured = false;
+    bool m_render_wireframe = false;
 
     static constexpr float k_base_sensitivity = 0.1f;
 };

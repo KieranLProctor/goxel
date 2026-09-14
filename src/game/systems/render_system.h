@@ -10,11 +10,12 @@ namespace goxel::game::systems
 class RenderSystem
 {
   public:
-    explicit RenderSystem(rendering::Camera &camera);
+    RenderSystem() = default;
+    // explicit RenderSystem(rendering::Camera &camera);
     ~RenderSystem();
 
     auto init() -> void;
-    auto update() -> void;
+    auto update() const -> void;
 
     auto set_shader(GLuint shader) -> void;
     auto set_vao(GLuint vao) -> void;
@@ -23,7 +24,7 @@ class RenderSystem
     static auto get_block_colour(voxel::Block block) -> glm::vec3;
 
   private:
-    rendering::Camera &m_camera;
+    // rendering::Camera &m_camera;
     GLuint m_shader = 0;
     GLuint m_vao = 0;
     GLuint m_vbo = 0;
