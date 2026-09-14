@@ -131,7 +131,6 @@ MainLayer::~MainLayer()
 auto MainLayer::on_update(const float time_step) -> void
 {
     auto *window = core::Application::get().get_window()->get_handle();
-
     auto &camera = game::get_registry().ctx().get<rendering::Camera>();
 
     glm::vec3 move(0.0f);
@@ -166,37 +165,6 @@ auto MainLayer::on_update(const float time_step) -> void
         move = glm::normalize(move);
         camera.translate(move * m_move_speed * time_step);
     }
-
-    // if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    // {
-    //     move += m_camera.get_front();
-    // }
-    // if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    // {
-    //     move -= m_camera.get_front();
-    // }
-    // if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    // {
-    //     move -= m_camera.get_right();
-    // }
-    // if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    // {
-    //     move += m_camera.get_right();
-    // }
-    // if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    // {
-    //     move += m_camera.get_world_up();
-    // }
-    // if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    // {
-    //     move -= m_camera.get_world_up();
-    // }
-    //
-    // if (glm::length(move) > 0.0f)
-    // {
-    //     move = glm::normalize(move);
-    //     m_camera.translate(move * m_move_speed * time_step);
-    // }
 }
 
 auto MainLayer::on_render() -> void
@@ -216,9 +184,9 @@ auto MainLayer::on_render() -> void
 auto MainLayer::on_event(core::Event &event) -> void
 {
     core::EventDispatcher dispatcher(event);
-    dispatcher.dispatch<core::KeyPressedEvent>([this](core::KeyPressedEvent &e) { return on_keyboard_input(e); });
-    // dispatcher.dispatch<core::MouseButtonEvent>([this](core::MouseButtonEvent &e) { return on_mouse_input(e); });
-    dispatcher.dispatch<core::MouseMovedEvent>([this](core::MouseMovedEvent &e) { return on_mouse_move(e); });
+    dispatcher.dispatch<core::KeyPressedEvent>([this](const core::KeyPressedEvent &e) { return on_keyboard_input(e); });
+    // dispatcher.dispatch<core::MouseButtonEvent>([this](const core::MouseButtonEvent &e) { return on_mouse_input(e); });
+    dispatcher.dispatch<core::MouseMovedEvent>([this](const core::MouseMovedEvent &e) { return on_mouse_move(e); });
 }
 
 auto MainLayer::on_keyboard_input(const core::KeyPressedEvent &event) -> bool
@@ -252,27 +220,10 @@ auto MainLayer::on_keyboard_input(const core::KeyPressedEvent &event) -> bool
         m_render_wireframe = !m_render_wireframe;
     }
 
-    // if (event.get_key_code() == GLFW_KEY_F5)
-    // {
-    //     m_camera.cycle_mode();
-    // }
-    //
-    // if (event.get_key_code() == GLFW_KEY_ESCAPE || event.get_key_code() == GLFW_KEY_E)
-    // {
-    //     m_cursor_captured = !m_cursor_captured;
-    //     core::Application::get().get_window()->set_cursor_captured(m_cursor_captured);
-    // }
-    //
-    // // TEMP.
-    // if (event.get_key_code() == GLFW_KEY_UP)
-    // {
-    //     m_camera.set_zoom(m_camera.get_zoom() + 1.0f);
-    // }
-    //
-    // if (event.get_key_code() == GLFW_KEY_DOWN)
-    // {
-    //     m_camera.set_zoom(m_camera.get_zoom() - 1.0f);
-    // }
+    if (event.get_key_code() == GLFW_KEY_F5)
+    {
+        camera.cycle_mode();
+    }
 
     return true;
 }
