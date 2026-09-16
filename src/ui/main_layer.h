@@ -28,6 +28,7 @@ class MainLayer : public core::Layer
 
     entt::registry &m_registry = game::get_registry();
     entt::entity m_player = entt::null;
+    entt::entity m_terrain = entt::null;
 
     float m_move_speed = 1.0f;
     float m_mouse_sensitivity = 1.0f;
@@ -35,6 +36,7 @@ class MainLayer : public core::Layer
     bool m_render_wireframe = false;
 
     static constexpr float k_base_sensitivity = 0.1f;
+    static constexpr float k_reach_distance = 8.0f;
 };
 
 } // namespace ui

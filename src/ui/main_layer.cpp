@@ -68,6 +68,9 @@ MainLayer::MainLayer()
     const auto terrain = registry.create();
     registry.emplace<game::components::Transform>(terrain, chunk.position);
     registry.emplace<game::components::ChunkMesh>(terrain, mesh_handle);
+    registry.emplace<voxel::Chunk>(terrain, chunk);
+
+    m_terrain = terrain;
 
     m_render_system.set_shader(simple_shader);
     m_render_system.init();
