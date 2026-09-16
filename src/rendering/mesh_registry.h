@@ -16,7 +16,7 @@ public:
     auto create_mesh(const float *vertices, int vertex_count) -> MeshHandle;
     auto destroy_mesh(MeshHandle handle) -> void;
 
-    auto get(MeshHandle handle) -> const Mesh*;
+    auto get(MeshHandle handle) const -> const Mesh*;
 
 private:
     std::unordered_map<GLuint, Mesh> m_meshes;

@@ -51,11 +51,17 @@ class Camera
     auto get_projection_matrix() const -> glm::mat4;
     auto get_view_projection() const -> glm::mat4;
 
-  private:
-    glm::vec3 m_position = {0.0f, 2.0f, 10.0f};
+    auto reset() -> void;
 
-    float m_yaw = 0.0f;
-    float m_pitch = 0.0f;
+    static constexpr glm::vec3 k_default_position = {8.0f, 10.0f, 40.0f};
+    static constexpr float k_default_yaw = -90.0f;
+    static constexpr float k_default_pitch = 0.0f;
+
+  private:
+    glm::vec3 m_position = {k_default_position};
+
+    float m_yaw = k_default_yaw;
+    float m_pitch = k_default_pitch;
 
     glm::vec3 m_look = {0.0f, 1.0f, 0.0f};
     glm::vec3 m_front = {0.0f, 0.0f, -1.0f};
@@ -64,7 +70,7 @@ class Camera
     glm::vec3 m_world_up = {0.0f, 1.0f, 0.0f};
 
     CameraMode m_mode = CameraMode::FIRST_PERSON;
-    float m_fov = 90.0f;
+    float m_fov = 70.0f;
     float m_near_plane = 0.1f;
     float m_far_plane = 2000.0f;
     float m_zoom = 1.0f;

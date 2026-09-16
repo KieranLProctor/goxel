@@ -1,5 +1,6 @@
 #include "render_system.h"
 
+#include "components/chunk_mesh.h"
 #include "components/renderable.h"
 #include "components/transform.h"
 #include "ecs.h"
@@ -15,8 +16,6 @@ namespace goxel::game::systems
 RenderSystem::~RenderSystem()
 {
     glDeleteProgram(m_shader);
-    glDeleteVertexArrays(1, &m_vao);
-    glDeleteBuffers(1, &m_vbo);
 }
 
 auto RenderSystem::init() -> void
@@ -29,18 +28,16 @@ auto RenderSystem::init() -> void
     m_loc_model = glGetUniformLocation(m_shader, "uModel");
     m_loc_view = glGetUniformLocation(m_shader, "uView");
     m_loc_projection = glGetUniformLocation(m_shader, "uProjection");
-    m_loc_colour = glGetUniformLocation(m_shader, "uBlockColour");
 }
 
 auto RenderSystem::update() const -> void
 {
-    if (m_shader == 0 || m_vao == 0)
+    if (m_shader == 0)
     {
         return;
     }
 
     glUseProgram(m_shader);
-    glBindVertexArray(m_vao);
 
     auto &registry = get_registry();
     const auto &camera = registry.ctx().get<rendering::Camera>();
@@ -48,29 +45,31 @@ auto RenderSystem::update() const -> void
     glm::mat4 view = camera.get_view_matrix();
     glm::mat4 projection = camera.get_projection_matrix();
 
-    // glm::mat4 view = m_camera.get_view_matrix();
-    // glm::mat4 projection = m_camera.get_projection_matrix();
-
     glUniformMatrix4fv(m_loc_view, 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(m_loc_projection, 1, GL_FALSE, &projection[0][0]);
 
-    // auto &registry = get_registry();
-    auto render_view = registry.view<components::Transform, components::Renderable>();
+    auto render_view = registry.view<components::Transform, components::ChunkMesh>();
 
     for (const auto entity : render_view)
     {
         auto &transform = render_view.get<components::Transform>(entity);
-        auto &renderable = render_view.get<components::Renderable>(entity);
+        auto &chunk_mesh = render_view.get<components::ChunkMesh>(entity);
+
+        const auto *mesh = m_mesh_registry.get(chunk_mesh.handle);
+
+        if (mesh == nullptr)
+        {
+            continue;
+        }
 
         // glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position);
         glm::mat4 model = glm::translate(glm::mat4(1.0f), transform.position) * glm::mat4_cast(transform.rotation) *
                           glm::scale(glm::mat4(1.0f), transform.scale);
-        glm::vec3 colour = get_block_colour(renderable.block_type);
 
         glUniformMatrix4fv(m_loc_model, 1, GL_FALSE, &model[0][0]);
-        glUniform3fv(m_loc_colour, 1, &colour[0]);
 
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(mesh->vao);
+        glDrawArrays(GL_TRIANGLES, 0, mesh->vertex_count);
     }
 
     glBindVertexArray(0);
@@ -83,30 +82,11 @@ auto RenderSystem::set_shader(const GLuint shader) -> void
     m_loc_model = glGetUniformLocation(m_shader, "uModel");
     m_loc_view = glGetUniformLocation(m_shader, "uView");
     m_loc_projection = glGetUniformLocation(m_shader, "uProjection");
-    m_loc_colour = glGetUniformLocation(m_shader, "uBlockColour");
 }
 
-auto RenderSystem::set_vao(const GLuint vao) -> void
+auto RenderSystem::get_mesh_registry() -> rendering::MeshRegistry &
 {
-    m_vao = vao;
-}
-
-auto RenderSystem::set_vbo(const GLuint vbo) -> void
-{
-    m_vbo = vbo;
-}
-
-auto RenderSystem::get_block_colour(const voxel::Block block) -> glm::vec3
-{
-    switch (block)
-    {
-    case voxel::Block::GRASS: return {0.0f, 0.8f, 0.2f};
-    case voxel::Block::DIRT: return {0.6f, 0.4f, 0.2f};
-    case voxel::Block::STONE: return {0.5f, 0.5f, 0.5f};
-    case voxel::Block::WOOD: return {0.7f, 0.5f, 0.2f};
-    case voxel::Block::LEAVES: return {0.0f, 0.7f, 0.1f};
-    default: return {1.0f, 0.0f, 1.0f};
-    }
+    return m_mesh_registry;
 }
 
 } // namespace goxel::game::systems

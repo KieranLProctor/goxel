@@ -10,6 +10,7 @@ target_sources(goxel_game PUBLIC FILE_SET HEADERS
         ecs.h
         components/transform.h
         components/renderable.h
+        components/chunk_mesh.h
 )
 
 add_library(goxel::game ALIAS goxel_game)

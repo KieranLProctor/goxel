@@ -1,11 +1,11 @@
 #include "main_layer.h"
 
 #include "application.h"
-#include "components/renderable.h"
+#include "chunk.h"
+#include "chunk_mesher.h"
+#include "components/chunk_mesh.h"
 #include "components/transform.h"
 #include "glad/glad.h"
-#include "glm/glm.hpp"
-#include "imgui.h"
 #include "shader.h"
 #include "spdlog/spdlog.h"
 
@@ -16,56 +16,6 @@ MainLayer::MainLayer()
 {
     spdlog::info("created MainLayer");
 
-    constexpr float vertices[] = {
-        // Front face (+Z)
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        // Back face (-Z)
-         1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-
-        // Right face (+X)
-         1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f,
-
-        // Left face (-X)
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-
-        // Top face (+Y)
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        // Bottom face (-Y)
-        -1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-    };
-
     const GLuint simple_shader =
         rendering::create_graphics_shader("assets/shaders/simple.vert", "assets/shaders/simple.frag");
 
@@ -74,59 +24,59 @@ MainLayer::MainLayer()
         return;
     }
 
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &m_vbo);
-
-    glBindVertexArray(m_vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void *>(nullptr));
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
     auto &registry = game::get_registry();
 
     const auto frame_buffer = core::Application::get().get_framebuffer_size();
 
-    auto &camera = registry.ctx().emplace<rendering::Camera>(-90.0f, 0.0f);
+    auto &camera = registry.ctx().emplace<rendering::Camera>(rendering::Camera::k_default_yaw, rendering::Camera::k_default_pitch);
+    camera.set_position(rendering::Camera::k_default_position);
     camera.set_viewport(static_cast<int>(frame_buffer.x), static_cast<int>(frame_buffer.y));
 
-    const auto grass = registry.create();
-    registry.emplace<game::components::Transform>(grass, glm::vec3(0.0f, 0.0f, 0.0f));
-    registry.emplace<game::components::Renderable>(grass, voxel::Block::GRASS);
+    // TEMP: hardcoded layered terrain until real world generation exists.
+    voxel::Chunk chunk;
+    for (int x = 0; x < voxel::S_CHUNK_SIZE; ++x)
+    {
+        for (int y = 0; y < voxel::S_CHUNK_SIZE; ++y)
+        {
+            for (int z = 0; z < voxel::S_CHUNK_SIZE; ++z)
+            {
+                auto block = voxel::Block::AIR;
 
-    // Dirt below
-    const auto dirt = registry.create();
-    registry.emplace<game::components::Transform>(dirt, glm::vec3(3.0f, 0.0f, 0.0f));
-    registry.emplace<game::components::Renderable>(dirt, voxel::Block::DIRT);
+                if (y < 4)
+                {
+                    block = voxel::Block::STONE;
+                }
+                else if (y < 7)
+                {
+                    block = voxel::Block::DIRT;
+                }
+                else if (y == 7)
+                {
+                    block = voxel::Block::GRASS;
+                }
 
-    // Stone
-    const auto stone = registry.create();
-    registry.emplace<game::components::Transform>(stone, glm::vec3(6.0f, 0.0f, 0.0f));
-    registry.emplace<game::components::Renderable>(stone, voxel::Block::STONE);
+                chunk.set_block(glm::vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), block);
+            }
+        }
+    }
+
+    const std::vector<float> mesh_data = voxel::build_chunk_mesh(chunk);
+    const int vertex_count = static_cast<int>(mesh_data.size() / 6);
+    const rendering::MeshHandle mesh_handle =
+        m_render_system.get_mesh_registry().create_mesh(mesh_data.data(), vertex_count);
+
+    const auto terrain = registry.create();
+    registry.emplace<game::components::Transform>(terrain, chunk.position);
+    registry.emplace<game::components::ChunkMesh>(terrain, mesh_handle);
 
     m_render_system.set_shader(simple_shader);
-    m_render_system.set_vao(m_vao);
-    m_render_system.set_vbo(m_vbo);
     m_render_system.init();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-
-    // const auto frame_buffer = core::Application::get().get_framebuffer_size();
-    // m_camera.set_viewport(static_cast<int>(frame_buffer.x), static_cast<int>(frame_buffer.y));
 }
 
-MainLayer::~MainLayer()
-{
-    glDeleteVertexArrays(1, &m_vao);
-    glDeleteBuffers(1, &m_vbo);
-}
+MainLayer::~MainLayer() = default;
 
 auto MainLayer::on_update(const float time_step) -> void
 {
@@ -228,7 +178,7 @@ auto MainLayer::on_keyboard_input(const core::KeyPressedEvent &event) -> bool
     return true;
 }
 
-auto MainLayer::on_mouse_move(const core::MouseMovedEvent &event) -> bool
+auto MainLayer::on_mouse_move(const core::MouseMovedEvent &event) const -> bool
 {
     auto &camera = game::get_registry().ctx().get<rendering::Camera>();
 
@@ -239,9 +189,6 @@ auto MainLayer::on_mouse_move(const core::MouseMovedEvent &event) -> bool
 
     camera.adjust_yaw(static_cast<float>(event.get_dx() * k_base_sensitivity * m_mouse_sensitivity));
     camera.adjust_pitch(static_cast<float>(-event.get_dy() * k_base_sensitivity * m_mouse_sensitivity));
-
-    // m_camera.adjust_yaw(static_cast<float>(event.get_dx() * k_base_sensitivity * m_mouse_sensitivity));
-    // m_camera.adjust_pitch(static_cast<float>(-event.get_dy() * k_base_sensitivity * m_mouse_sensitivity));
 
     return true;
 }

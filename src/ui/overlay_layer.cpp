@@ -101,6 +101,8 @@ auto OverlayLayer::show_menu_bar(const bool is_visible) -> void
         return;
     }
 
+    auto &camera = game::get_registry().ctx().get<rendering::Camera>();
+
     // Menubar (same as context menu).
     if (ImGui::BeginMainMenuBar())
     {
@@ -191,7 +193,14 @@ auto OverlayLayer::show_menu_bar(const bool is_visible) -> void
             // ImGui::SliderFloat("Speed", &cameraSpeed, 0.1f, 50.0f);
             // ImGui::Checkbox("Lock Y Axis", &lockY);
 
-            ImGui::MenuItem("Reset Position");
+            if (ImGui::MenuItem("Reset Position"))
+            {
+                camera.reset();
+            }
+            if (ImGui::MenuItem("Cycle Mode"))
+            {
+                camera.cycle_mode();
+            }
 
             ImGui::EndMenu();
         }

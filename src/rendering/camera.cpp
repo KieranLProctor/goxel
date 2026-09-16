@@ -175,6 +175,14 @@ auto Camera::get_view_projection() const -> glm::mat4
     return get_projection_matrix() * get_view_matrix();
 }
 
+auto Camera::reset() -> void
+{
+    m_position = k_default_position;
+    m_yaw = k_default_yaw;
+    m_pitch = k_default_pitch;
+    update_vectors();
+}
+
 auto Camera::update_vectors() -> void
 {
     glm::vec3 look;
