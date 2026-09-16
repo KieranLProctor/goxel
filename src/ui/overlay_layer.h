@@ -17,6 +17,8 @@ class OverlayLayer : public core::Layer
     auto on_update(float time_step) -> void override;
     auto on_render() -> void override;
 
+    static constexpr float k_reach_distance = 8.0f;
+
   private:
     bool m_show_menu_bar = false;
 

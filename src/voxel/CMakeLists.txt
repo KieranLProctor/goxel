@@ -3,6 +3,7 @@ add_library(goxel_voxel STATIC)
 target_sources(goxel_voxel PRIVATE
         chunk.cpp
         chunk_mesher.cpp
+        raycast.cpp
 )
 
 target_sources(goxel_voxel PUBLIC FILE_SET HEADERS
@@ -11,6 +12,7 @@ target_sources(goxel_voxel PUBLIC FILE_SET HEADERS
         block.h
         chunk.h
         chunk_mesher.h
+        raycast.h
 )
 
 add_library(goxel::voxel ALIAS goxel_voxel)

@@ -6,6 +6,9 @@
 #include "imgui.h"
 #include "spdlog/spdlog.h"
 
+#include "chunk.h"
+#include "raycast.h"
+
 namespace goxel::ui
 {
 
@@ -90,6 +93,31 @@ auto OverlayLayer::on_render() -> void
     if (ImGui::Button("Cycle Mode (F5)"))
     {
         camera.cycle_mode();
+    }
+    ImGui::SeparatorText("Targeting");
+
+    auto &registry = game::get_registry();
+    auto chunk_view = registry.view<voxel::Chunk>();
+
+    if (chunk_view.begin() == chunk_view.end())
+    {
+        ImGui::Text("No chunk loaded");
+    }
+    else
+    {
+        const auto &chunk = chunk_view.get<voxel::Chunk>(*chunk_view.begin());
+
+        const glm::vec3 local_origin = camera.get_position() - chunk.position;
+
+        if (const auto hit = voxel::raycast(chunk, local_origin, camera.get_look(), k_reach_distance))
+        {
+            const auto &properties = voxel::get_block_properties(chunk.get_block(glm::vec3(hit->block)));
+            ImGui::Text("In reach: %s (%d, %d, %d)", properties.name, hit->block.x, hit->block.y, hit->block.z);
+        }
+        else
+        {
+            ImGui::Text("In reach: nothing");
+        }
     }
     ImGui::End();
 }
@@ -277,4 +305,4 @@ auto OverlayLayer::on_keyboard_input(const core::KeyPressedEvent &event) -> bool
     return false;
 }
 
-} // namespace ui
+} // namespace goxel::ui
